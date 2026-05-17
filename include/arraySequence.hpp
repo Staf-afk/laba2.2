@@ -1,6 +1,7 @@
 #pragma once
 #include "sequence.hpp"
 #include "dynamicArray.hpp"
+#include "linkedList.hpp"
 
 template<typename T>
 class ArraySequence : public Sequence<T> {

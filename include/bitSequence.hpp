@@ -1,7 +1,7 @@
 #pragma once
 #include "sequence.hpp"
-#include "dynamicArray.hpp"  // Добавьте эту строку
-#include "arraySequence.hpp" // Добавьте эту строку
+#include "dynamicArray.hpp"
+#include "arraySequence.hpp"
 
 class Bit {
     bool value;
@@ -20,15 +20,20 @@ public:
 class BitSequence : public Sequence<Bit> {
     unsigned char* data;
     int bitLength;
-    void SetBit(int index, bool value);
-    bool GetBit(int index) const;
+    
 public:
+    // Конструкторы и деструктор
     BitSequence();
-    BitSequence(int size);
+    explicit BitSequence(int size);
     BitSequence(bool* bits, int count);
     BitSequence(const BitSequence& other);
     ~BitSequence();
     
+    // Публичные методы доступа к битам
+    void SetBit(int index, bool value);
+    bool GetBit(int index) const;
+    
+    // Методы Sequence
     Bit GetFirst() const override;
     Bit GetLast() const override;
     Bit Get(int index) const override;
@@ -40,8 +45,6 @@ public:
     BitSequence* InsertAt(Bit item, int index) override;
     BitSequence* Concat(Sequence<Bit>* list) override;
     
-    // Эти методы теперь есть в базовом классе как невиртуальные
-    // Но мы их реализуем здесь
     template<typename T2> Sequence<T2>* Map(std::function<T2(Bit)> func);
     Sequence<Bit>* Where(std::function<bool(Bit)> predicate);
     template<typename T2> T2 Reduce(std::function<T2(T2, Bit)> func, T2 initial);
@@ -51,9 +54,26 @@ public:
     BitSequence* Or(const BitSequence& other) const;
     BitSequence* Xor(const BitSequence& other) const;
     BitSequence* Not() const;
+    
     IEnumerator<Bit>* GetEnumerator() override;
     BitSequence& operator=(const BitSequence& other);
 };
 
-// Включаем реализации в КОНЦЕ файла
-#include "../src/bitSequence.tpp"
+// Реализации шаблонных методов
+template<typename T2> 
+Sequence<T2>* BitSequence::Map(std::function<T2(Bit)> func) {
+    T2* result = new T2[bitLength];
+    for (int i = 0; i < bitLength; ++i) {
+        result[i] = func(Get(i));
+    }
+    auto* seq = new ArraySequence<T2>(result, bitLength);
+    delete[] result;
+    return seq;
+}
+
+template<typename T2> 
+T2 BitSequence::Reduce(std::function<T2(T2, Bit)> func, T2 initial) {
+    T2 res = initial;
+    for (int i = 0; i < bitLength; ++i) res = func(res, Get(i));
+    return res;
+}

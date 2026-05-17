@@ -1,2 +1,11 @@
 *.o
-build/
+*.dll
+translations/
+tls/
+styles/
+platforms/
+networkinformation/
+imageformats/
+iconengines/
+generic/
+.qtcreator/
