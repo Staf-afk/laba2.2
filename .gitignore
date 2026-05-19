@@ -1,0 +1,12 @@
+*.o
+*.dll
+*.exe
+translations/
+tls/
+styles/
+platforms/
+networkinformation/
+imageformats/
+iconengines/
+generic/
+.qtcreator/

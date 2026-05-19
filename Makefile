@@ -22,6 +22,7 @@ WIN_OPTIONS = -DUNICODE -DWIN32 -DWIN64
 
 UI_DIR = ui
 INCLUDE_DIR = include
+TESTS_DIR = tests
 
 # Исходные файлы
 OBJECTS = $(UI_DIR)/main.o $(UI_DIR)/mainwindow.o $(UI_DIR)/moc_mainwindow.o bitSequence.o
@@ -32,13 +33,13 @@ CXXFLAGS_ALL = $(CXXFLAGS) $(QT_INCLUDES) $(WIN_OPTIONS)
 
 all: $(TARGET)
 
-# Генерация MOC файла
-$(UI_DIR)/moc_mainwindow.cpp: $(UI_DIR)/mainwindow.h
-	$(QT_PATH)/bin/moc.exe $< -o $@
-
 # Компиляция bitSequence.cpp
 bitSequence.o: bitSequence.cpp $(INCLUDE_DIR)/bitSequence.hpp
 	$(CXX) $(CXXFLAGS_ALL) -c bitSequence.cpp -o bitSequence.o
+
+# Генерация MOC файла
+$(UI_DIR)/moc_mainwindow.cpp: $(UI_DIR)/mainwindow.h
+	$(QT_PATH)/bin/moc.exe $< -o $@
 
 # Компиляция main.cpp
 $(UI_DIR)/main.o: $(UI_DIR)/main.cpp $(UI_DIR)/mainwindow.h
@@ -56,10 +57,25 @@ $(UI_DIR)/moc_mainwindow.o: $(UI_DIR)/moc_mainwindow.cpp
 $(TARGET): $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $(TARGET) $(QT_LIBS) -static-libgcc -static-libstdc++
 
+# Запуск всех тестов
+test:
+	$(CXX) $(CXXFLAGS) -Iinclude $(TESTS_DIR)/test_dynamic_array.cpp -o $(TESTS_DIR)/test_dynamic_array.exe
+	$(CXX) $(CXXFLAGS) -Iinclude $(TESTS_DIR)/test_linked_list.cpp -o $(TESTS_DIR)/test_linked_list.exe
+	$(CXX) $(CXXFLAGS) -Iinclude $(TESTS_DIR)/test_bit_sequence.cpp bitSequence.o -o $(TESTS_DIR)/test_bit_sequence.exe
+	$(CXX) $(CXXFLAGS) -Iinclude $(TESTS_DIR)/test_sequences.cpp -o $(TESTS_DIR)/test_sequences.exe
+	$(TESTS_DIR)/test_dynamic_array.exe
+	$(TESTS_DIR)/test_linked_list.exe
+	$(TESTS_DIR)/test_bit_sequence.exe
+	$(TESTS_DIR)/test_sequences.exe
+
 clean:
-	del /f $(UI_DIR)\\*.o $(UI_DIR)\\moc_*.cpp bitSequence.o $(TARGET) 2>nul || rm -f $(UI_DIR)/*.o $(UI_DIR)/moc_*.cpp bitSequence.o $(TARGET)
+	if exist $(UI_DIR)\\*.o del /f $(UI_DIR)\\*.o
+	if exist $(UI_DIR)\\moc_*.cpp del /f $(UI_DIR)\\moc_*.cpp
+	if exist bitSequence.o del /f bitSequence.o
+	if exist $(TARGET) del /f $(TARGET)
+	if exist $(TESTS_DIR)\\*.exe del /f $(TESTS_DIR)\\*.exe
 
 run: $(TARGET)
 	$(TARGET)
 
-.PHONY: all clean run
+.PHONY: all clean run test

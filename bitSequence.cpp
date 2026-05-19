@@ -1,8 +1,8 @@
-// bitSequence.cpp
-#include "../include/bitSequence.hpp"
-#include "../include/exceptions.hpp"
-#include "../include/dynamicArray.hpp"
-#include "../include/arraySequence.hpp"
+// bitSequence.cpp (в корне проекта)
+#include "include/bitSequence.hpp"
+#include "include/exceptions.hpp"
+#include "include/dynamicArray.hpp"
+#include "include/arraySequence.hpp"
 #include <cstring>
 #include <functional>
 

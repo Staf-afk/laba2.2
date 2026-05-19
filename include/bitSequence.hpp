@@ -1,3 +1,4 @@
+// include/bitSequence.hpp
 #pragma once
 #include "sequence.hpp"
 #include "dynamicArray.hpp"
@@ -59,7 +60,7 @@ public:
     BitSequence& operator=(const BitSequence& other);
 };
 
-// Реализации шаблонных методов
+// Реализации шаблонных методов (должны быть в .hpp, так как они шаблонные)
 template<typename T2> 
 Sequence<T2>* BitSequence::Map(std::function<T2(Bit)> func) {
     T2* result = new T2[bitLength];

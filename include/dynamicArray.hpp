@@ -6,7 +6,6 @@ class DynamicArray : public IEnumerable<T> {
 private:
     T* data;
     int size;
-    int capacity;
 public:
     DynamicArray();
     DynamicArray(int size);
@@ -22,4 +21,5 @@ public:
     
     DynamicArray<T>& operator=(const DynamicArray<T>& other);
 };
+
 #include "../src/dynamicArray.tpp"
