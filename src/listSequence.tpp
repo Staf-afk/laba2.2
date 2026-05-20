@@ -57,9 +57,7 @@ Option<T> ListSequence<T>::Find(std::function<bool(T)> pred) {
     return Option<T>();
 }
 
-template<typename T> IEnumerator<T>* ListSequence<T>::GetEnumerator() { return nullptr; }
-
-// Immutable overrides
+// Immutable 
 template<typename T> 
 ImmutableListSequence<T>* ImmutableListSequence<T>::Append(T item) {
     auto* c = new ImmutableListSequence<T>(*this);

@@ -147,10 +147,6 @@ BitSequence* BitSequence::Not() const {
     return r;
 }
 
-IEnumerator<Bit>* BitSequence::GetEnumerator() { 
-    return nullptr; 
-}
-
 BitSequence& BitSequence::operator=(const BitSequence& o) {
     if (this != &o) {
         delete[] data; 

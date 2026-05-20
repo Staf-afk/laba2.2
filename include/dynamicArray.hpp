@@ -1,8 +1,7 @@
 #pragma once
-#include "enumerator.hpp"
 
 template<typename T>
-class DynamicArray : public IEnumerable<T> {
+class DynamicArray{
 private:
     T* data;
     int size;
@@ -17,8 +16,7 @@ public:
     void Set(int index, T value);
     int GetSize() const;
     void Resize(int newSize);
-    IEnumerator<T>* GetEnumerator() override;
-    
+   
     DynamicArray<T>& operator=(const DynamicArray<T>& other);
 };
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "enumerator.hpp"
 
 template<typename T>
 struct Node {
@@ -9,7 +8,7 @@ struct Node {
 };
 
 template<typename T>
-class LinkedList : public IEnumerable<T> {
+class LinkedList {
 private:
     Node<T>* head;
     Node<T>* tail;
@@ -30,6 +29,5 @@ public:
     void Prepend(T item);
     void InsertAt(T item, int index);
     LinkedList<T>* Concat(LinkedList<T>* list);
-    IEnumerator<T>* GetEnumerator() override;
 };
 #include "../src/linkedList.tpp"

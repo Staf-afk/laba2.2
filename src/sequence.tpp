@@ -2,13 +2,11 @@
 
 template<typename T> template<typename T2>
 Sequence<T2>* Sequence<T>::Map(std::function<T2(T)> func) {
-    // Базовая реализация (должна быть переопределена в наследниках)
     return nullptr;
 }
 
 template<typename T>
 Sequence<T>* Sequence<T>::Where(std::function<bool(T)> predicate) {
-    // Базовая реализация
     return nullptr;
 }
 

@@ -69,4 +69,3 @@ template<typename T> LinkedList<T>* LinkedList<T>::Concat(LinkedList<T>* list) {
     while (curr) { res->Append(curr->data); curr = curr->next; }
     return res;
 }
-template<typename T> IEnumerator<T>* LinkedList<T>::GetEnumerator() { return nullptr; }

@@ -47,10 +47,6 @@ template<typename T> void DynamicArray<T>::Resize(int newSize) {
     size = newSize;
 }
 
-template<typename T> IEnumerator<T>* DynamicArray<T>::GetEnumerator() { 
-    return nullptr; 
-}
-
 template<typename T> DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray<T>& other) {
     if (this != &other) {
         delete[] data;

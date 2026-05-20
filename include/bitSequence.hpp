@@ -1,4 +1,3 @@
-// include/bitSequence.hpp
 #pragma once
 #include "sequence.hpp"
 #include "dynamicArray.hpp"
@@ -23,18 +22,15 @@ class BitSequence : public Sequence<Bit> {
     int bitLength;
     
 public:
-    // Конструкторы и деструктор
     BitSequence();
     explicit BitSequence(int size);
     BitSequence(bool* bits, int count);
     BitSequence(const BitSequence& other);
     ~BitSequence();
     
-    // Публичные методы доступа к битам
     void SetBit(int index, bool value);
     bool GetBit(int index) const;
     
-    // Методы Sequence
     Bit GetFirst() const override;
     Bit GetLast() const override;
     Bit Get(int index) const override;
@@ -56,11 +52,8 @@ public:
     BitSequence* Xor(const BitSequence& other) const;
     BitSequence* Not() const;
     
-    IEnumerator<Bit>* GetEnumerator() override;
     BitSequence& operator=(const BitSequence& other);
 };
-
-// Реализации шаблонных методов (должны быть в .hpp, так как они шаблонные)
 template<typename T2> 
 Sequence<T2>* BitSequence::Map(std::function<T2(Bit)> func) {
     T2* result = new T2[bitLength];

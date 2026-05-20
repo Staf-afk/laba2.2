@@ -89,8 +89,6 @@ Option<T> ArraySequence<T>::Find(std::function<bool(T)> pred) {
     return Option<T>();
 }
 
-template<typename T> IEnumerator<T>* ArraySequence<T>::GetEnumerator() { return nullptr; }
-
 // Immutable overrides
 template<typename T> 
 ImmutableArraySequence<T>* ImmutableArraySequence<T>::Append(T item) {

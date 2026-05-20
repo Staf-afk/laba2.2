@@ -27,8 +27,6 @@ public:
     Sequence<T>* Where(std::function<bool(T)> predicate);
     template<typename T2> T2 Reduce(std::function<T2(T2, T)> func, T2 initial);
     Option<T> Find(std::function<bool(T)> predicate) override;
-    
-    IEnumerator<T>* GetEnumerator() override;
 };
 
 template<typename T> class MutableListSequence : public ListSequence<T> {
