@@ -17,7 +17,6 @@ public:
     virtual Sequence<T>* InsertAt(T item, int index) = 0;
     virtual Sequence<T>* Concat(Sequence<T>* list) = 0;
     
-    // Шаблонные методы (не виртуальные)
     template<typename T2> Sequence<T2>* Map(std::function<T2(T)> func);
     Sequence<T>* Where(std::function<bool(T)> predicate);
     template<typename T2> T2 Reduce(std::function<T2(T2, T)> func, T2 initial);

@@ -45,11 +45,11 @@ $(UI_DIR)/moc_mainwindow.o: $(UI_DIR)/moc_mainwindow.cpp
 $(TARGET): $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $(TARGET) $(QT_LIBS) -static-libgcc -static-libstdc++
 
-test:
-	$(CXX) $(CXXFLAGS) -Iinclude $(TESTS_DIR)/test_dynamic_array.cpp -o $(TESTS_DIR)/test_dynamic_array.exe
-	$(CXX) $(CXXFLAGS) -Iinclude $(TESTS_DIR)/test_linked_list.cpp -o $(TESTS_DIR)/test_linked_list.exe
-	$(CXX) $(CXXFLAGS) -Iinclude $(TESTS_DIR)/test_bit_sequence.cpp bitSequence.o -o $(TESTS_DIR)/test_bit_sequence.exe
-	$(CXX) $(CXXFLAGS) -Iinclude $(TESTS_DIR)/test_sequences.cpp -o $(TESTS_DIR)/test_sequences.exe
+test: bitSequence.o
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_dynamic_array.cpp -o $(TESTS_DIR)/test_dynamic_array.exe
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_linked_list.cpp -o $(TESTS_DIR)/test_linked_list.exe
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_bit_sequence.cpp bitSequence.o -o $(TESTS_DIR)/test_bit_sequence.exe
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_sequences.cpp -o $(TESTS_DIR)/test_sequences.exe
 	$(TESTS_DIR)/test_dynamic_array.exe
 	$(TESTS_DIR)/test_linked_list.exe
 	$(TESTS_DIR)/test_bit_sequence.exe

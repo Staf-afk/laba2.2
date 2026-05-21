@@ -23,9 +23,9 @@ public:
     ListSequence<T>* InsertAt(T item, int index) override;
     ListSequence<T>* Concat(Sequence<T>* list) override;
     
-    template<typename T2> Sequence<T2>* Map(std::function<T2(T)> func);
-    Sequence<T>* Where(std::function<bool(T)> predicate);
-    template<typename T2> T2 Reduce(std::function<T2(T2, T)> func, T2 initial);
+    ListSequence<T>* Map();
+    ListSequence<T>* Where();
+    T Reduce();
     Option<T> Find(std::function<bool(T)> predicate) override;
 };
 

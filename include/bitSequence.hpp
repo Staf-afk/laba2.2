@@ -54,20 +54,3 @@ public:
     
     BitSequence& operator=(const BitSequence& other);
 };
-template<typename T2> 
-Sequence<T2>* BitSequence::Map(std::function<T2(Bit)> func) {
-    T2* result = new T2[bitLength];
-    for (int i = 0; i < bitLength; ++i) {
-        result[i] = func(Get(i));
-    }
-    auto* seq = new ArraySequence<T2>(result, bitLength);
-    delete[] result;
-    return seq;
-}
-
-template<typename T2> 
-T2 BitSequence::Reduce(std::function<T2(T2, Bit)> func, T2 initial) {
-    T2 res = initial;
-    for (int i = 0; i < bitLength; ++i) res = func(res, Get(i));
-    return res;
-}

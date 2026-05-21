@@ -26,27 +26,59 @@ template<typename T> ListSequence<T>* ListSequence<T>::Concat(Sequence<T>* list)
     return new ListSequence<T>(*combined);
 }
 
-template<typename T> template<typename T2>
-Sequence<T2>* ListSequence<T>::Map(std::function<T2(T)> func) {
-    T2* data = new T2[GetLength()];
-    for (int i = 0; i < GetLength(); ++i) data[i] = func(Get(i));
-    Sequence<T2>* result = new ListSequence<T2>(data, GetLength());
-    delete[] data;
+template<typename T>
+ListSequence<T>* ListSequence<T>::Map() {
+    int len = GetLength();
+    if (len == 0) {
+        return new ListSequence<T>();
+    }
+    
+    T* newData = new T[len];
+    for (int i = 0; i < len; ++i) {
+        newData[i] = Get(i) + 1;  // Увеличиваем на 1
+    }
+    
+    ListSequence<T>* result = new ListSequence<T>(newData, len);
+    delete[] newData;
     return result;
 }
 
 template<typename T>
-Sequence<T>* ListSequence<T>::Where(std::function<bool(T)> pred) {
-    LinkedList<T>* filtered = new LinkedList<T>();
-    for (int i = 0; i < GetLength(); ++i) if (pred(Get(i))) filtered->Append(Get(i));
-    return new ListSequence<T>(*filtered);
+ListSequence<T>* ListSequence<T>::Where() {
+    int len = GetLength();
+    if (len == 0) {
+        return new ListSequence<T>();
+    }
+    int evenCount = 0;
+    for (int i = 0; i < len; ++i) {
+        if (Get(i) % 2 == 0) {
+            evenCount++;
+        }
+    }
+    T* evenData = new T[evenCount];
+    int index = 0;
+    for (int i = 0; i < len; ++i) {
+        if (Get(i) % 2 == 0) {
+            evenData[index++] = Get(i);
+        }
+    }
+    
+    ListSequence<T>* result = new ListSequence<T>(evenData, evenCount);
+    delete[] evenData;
+    return result;
 }
 
-template<typename T> template<typename T2>
-T2 ListSequence<T>::Reduce(std::function<T2(T2, T)> func, T2 initial) {
-    T2 res = initial;
-    for (int i = 0; i < GetLength(); ++i) res = func(res, Get(i));
-    return res;
+template<typename T>
+T ListSequence<T>::Reduce() {
+    int len = GetLength();
+    if (len == 0) {
+        return T(0);
+    }
+    T sum = T(0);
+    for (int i = 0; i < len; ++i) {
+        sum = sum + Get(i);
+    }
+    return sum;
 }
 
 template<typename T> 
@@ -57,7 +89,6 @@ Option<T> ListSequence<T>::Find(std::function<bool(T)> pred) {
     return Option<T>();
 }
 
-// Immutable 
 template<typename T> 
 ImmutableListSequence<T>* ImmutableListSequence<T>::Append(T item) {
     auto* c = new ImmutableListSequence<T>(*this);
