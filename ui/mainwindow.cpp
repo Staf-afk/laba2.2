@@ -118,7 +118,6 @@ QWidget* MainWindow::createArraySequenceTab()
     QPushButton* reduceBtn = new QPushButton("Reduce (sum)");
     QPushButton* findBtn = new QPushButton("Find (value == 3)");
     
-    // Кнопки удаления
     QPushButton* removeAtBtn = new QPushButton("RemoveAt");
     QPushButton* removeFirstBtn = new QPushButton("RemoveFirst");
     QPushButton* removeLastBtn = new QPushButton("RemoveLast");
@@ -188,12 +187,10 @@ QWidget* MainWindow::createArraySequenceTab()
         }
     });
     
-    // RemoveAt - удаление по индексу
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
                 int index = indexInput->text().toInt();
-                // Создаем новую последовательность без элемента
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
                 for (int i = 0; i < currentArraySeq->GetLength(); i++) {
                     if (i != index) {
@@ -211,7 +208,6 @@ QWidget* MainWindow::createArraySequenceTab()
         }
     });
     
-    // RemoveFirst - удаление первого элемента
     connect(removeFirstBtn, &QPushButton::clicked, [this]() {
         if (currentArraySeq->GetLength() > 0) {
             try {
@@ -231,7 +227,6 @@ QWidget* MainWindow::createArraySequenceTab()
         }
     });
     
-    // RemoveLast - удаление последнего элемента
     connect(removeLastBtn, &QPushButton::clicked, [this]() {
         if (currentArraySeq->GetLength() > 0) {
             try {
@@ -246,7 +241,8 @@ QWidget* MainWindow::createArraySequenceTab()
             } catch (const std::exception& e) { 
                 updateOutput("Error: " + QString(e.what())); 
             }
-        } else {
+        } 
+        else {
             updateOutput("RemoveLast: sequence is empty");
         }
     });
@@ -369,7 +365,6 @@ QWidget* MainWindow::createListSequenceTab()
     QPushButton* reduceBtn = new QPushButton("Reduce (sum)");
     QPushButton* findBtn = new QPushButton("Find (value == 3)");
     
-    // Кнопки удаления
     QPushButton* removeAtBtn = new QPushButton("RemoveAt");
     QPushButton* removeFirstBtn = new QPushButton("RemoveFirst");
     QPushButton* removeLastBtn = new QPushButton("RemoveLast");
@@ -439,7 +434,6 @@ QWidget* MainWindow::createListSequenceTab()
         }
     });
     
-    // RemoveAt - удаление по индексу
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
@@ -461,7 +455,6 @@ QWidget* MainWindow::createListSequenceTab()
         }
     });
     
-    // RemoveFirst - удаление первого элемента
     connect(removeFirstBtn, &QPushButton::clicked, [this]() {
         if (currentListSeq->GetLength() > 0) {
             try {
@@ -476,12 +469,12 @@ QWidget* MainWindow::createListSequenceTab()
             } catch (const std::exception& e) { 
                 updateOutput("Error: " + QString(e.what())); 
             }
-        } else {
+        } 
+        else {
             updateOutput("List RemoveFirst: sequence is empty");
         }
     });
     
-    // RemoveLast - удаление последнего элемента
     connect(removeLastBtn, &QPushButton::clicked, [this]() {
         if (currentListSeq->GetLength() > 0) {
             try {
@@ -619,7 +612,6 @@ QWidget* MainWindow::createBitSequenceTab()
     QPushButton* insertBtn = new QPushButton("InsertAt");
     QPushButton* createBtn = new QPushButton("Create New");
     
-    // Кнопки удаления для BitSequence
     QPushButton* removeAtBtn = new QPushButton("RemoveBitAt");
     QPushButton* removeFirstBtn = new QPushButton("RemoveFirstBit");
     QPushButton* removeLastBtn = new QPushButton("RemoveLastBit");
@@ -671,7 +663,6 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    // RemoveBitAt - удаление бита по индексу
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
@@ -694,7 +685,6 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    // RemoveFirstBit - удаление первого бита
     connect(removeFirstBtn, &QPushButton::clicked, [this]() {
         if (currentBitSeq->GetLength() > 0) {
             try {
@@ -714,7 +704,6 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    // RemoveLastBit - удаление последнего бита
     connect(removeLastBtn, &QPushButton::clicked, [this]() {
         if (currentBitSeq->GetLength() > 0) {
             try {
@@ -854,7 +843,6 @@ QWidget* MainWindow::createLinkedListTab()
     QPushButton* getBtn = new QPushButton("Get");
     QPushButton* sublistBtn = new QPushButton("GetSubList");
     
-    // Кнопки удаления для LinkedList
     QPushButton* removeAtBtn = new QPushButton("RemoveAt");
     QPushButton* removeFirstBtn = new QPushButton("RemoveFirst");
     QPushButton* removeLastBtn = new QPushButton("RemoveLast");
@@ -918,7 +906,6 @@ QWidget* MainWindow::createLinkedListTab()
         }
     });
     
-    // RemoveAt - удаление по индексу
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
@@ -940,7 +927,6 @@ QWidget* MainWindow::createLinkedListTab()
         }
     });
     
-    // RemoveFirst - удаление первого элемента
     connect(removeFirstBtn, &QPushButton::clicked, [this]() {
         if (currentLinkedList->GetLength() > 0) {
             try {
@@ -960,7 +946,6 @@ QWidget* MainWindow::createLinkedListTab()
         }
     });
     
-    // RemoveLast - удаление последнего элемента
     connect(removeLastBtn, &QPushButton::clicked, [this]() {
         if (currentLinkedList->GetLength() > 0) {
             try {
@@ -975,7 +960,8 @@ QWidget* MainWindow::createLinkedListTab()
             } catch (const std::exception& e) { 
                 updateOutput("Error: " + QString(e.what())); 
             }
-        } else {
+        } 
+        else {
             updateOutput("LinkedList RemoveLast: list is empty");
         }
     });

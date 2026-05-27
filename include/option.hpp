@@ -73,3 +73,4 @@ class None : public Option<T> {
 public:
     None() : Option<T>() {}
 };
+

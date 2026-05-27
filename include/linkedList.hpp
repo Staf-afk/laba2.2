@@ -31,3 +31,4 @@ public:
     LinkedList<T>* Concat(LinkedList<T>* list);
 };
 #include "../src/linkedList.tpp"
+

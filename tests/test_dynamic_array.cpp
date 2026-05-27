@@ -11,7 +11,8 @@ private:
         if (expected == actual) {
             std::cout << "  ? " << testName << " - ‰„…" << std::endl;
             passed++;
-        } else {
+        } 
+        else {
             std::cout << "  ? " << testName << " - … ‰„… (¦¨¤ «®αμ: " << expected 
                       << ", ®«γη¥­®: " << actual << ")" << std::endl;
             failed++;
@@ -190,3 +191,4 @@ int main() {
     tests.runAll();
     return 0;
 }
+

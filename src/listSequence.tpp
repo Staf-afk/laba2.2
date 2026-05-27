@@ -107,3 +107,4 @@ ImmutableListSequence<T>* ImmutableListSequence<T>::InsertAt(T item, int idx) {
     c->ListSequence<T>::InsertAt(item, idx);
     return c;
 }
+

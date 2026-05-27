@@ -31,7 +31,8 @@ public:
     Option<T> Find(std::function<bool(T)> predicate) override;
 };
 
-template<typename T> class MutableArraySequence : public ArraySequence<T> {
+template<typename T>
+class MutableArraySequence : public ArraySequence<T> {
 public:
     MutableArraySequence() : ArraySequence<T>() {}
     MutableArraySequence(T* items, int count) : ArraySequence<T>(items, count) {}
@@ -39,7 +40,8 @@ public:
     MutableArraySequence(DynamicArray<T>* arr) : ArraySequence<T>(arr) {}
 };
 
-template<typename T> class ImmutableArraySequence : public ArraySequence<T> {
+template<typename T>
+class ImmutableArraySequence : public ArraySequence<T> {
 public:
     ImmutableArraySequence() : ArraySequence<T>() {}
     ImmutableArraySequence(T* items, int count) : ArraySequence<T>(items, count) {}
@@ -52,3 +54,4 @@ public:
 };
 
 #include "../src/arraySequence.tpp"
+

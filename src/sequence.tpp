@@ -24,3 +24,4 @@ Option<T> Sequence<T>::Find(std::function<bool(T)> predicate) {
     }
     return Option<T>();
 }
+

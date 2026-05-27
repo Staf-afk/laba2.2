@@ -49,3 +49,4 @@ public:
     SizeMismatchException(const std::string& msg = "Size mismatch between sequences") : message(msg) {}
     const char* what() const noexcept override { return message.c_str(); }
 };
+

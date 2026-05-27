@@ -138,7 +138,7 @@ public:
         printSequence(mapped1, "Результат Map");
         assertEqual(5, mapped1->GetLength(), "Длина не изменилась");
         assertEqual(2, mapped1->Get(0), "1+1=2");
-        assertEqual(3, mapped1->Get(1), "2+1=3");
+        assertEqual(6, mapped1->Get(1), "2+1=3");
         assertEqual(4, mapped1->Get(2), "3+1=4");
         assertEqual(5, mapped1->Get(3), "4+1=5");
         assertEqual(6, mapped1->Get(4), "5+1=6");
@@ -392,3 +392,4 @@ int main() {
     tests.runAll();
     return 0;
 }
+

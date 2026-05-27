@@ -182,3 +182,4 @@ ImmutableArraySequence<T>* ImmutableArraySequence<T>::InsertAt(T item, int index
     c->ArraySequence<T>::InsertAt(item, index);
     return c;
 }
+
