@@ -27,16 +27,15 @@ MainWindow::MainWindow(QWidget *parent)
     
     currentArraySeq = new ArraySequence<int>();
     currentListSeq = new ListSequence<int>();
-    currentBitSeq = new BitSequence(0);
+    currentBitSeq = new BitSequence(static_cast<size_t>(0));
     currentLinkedList = new LinkedList<int>();
-
 
     displayArraySequence();
     displayListSequence();
     displayBitSequence();
     displayLinkedList();
     
-    updateOutput("Application started. Use tabs to work with different data structures.\n");
+    updateOutput("Application started. Use tabs to work with data structures.\n");
 }
 
 MainWindow::~MainWindow()
@@ -164,7 +163,7 @@ QWidget* MainWindow::createArraySequenceTab()
     connect(insertBtn, &QPushButton::clicked, [this, valueInput, indexInput]() {
         if (!valueInput->text().isEmpty() && !indexInput->text().isEmpty()) {
             try {
-                currentArraySeq->InsertAt(valueInput->text().toInt(), indexInput->text().toInt());
+                currentArraySeq->InsertAt(valueInput->text().toInt(), static_cast<size_t>(indexInput->text().toInt()));
                 displayArraySequence();
                 updateOutput("InsertAt(" + valueInput->text() + ", " + indexInput->text() + ")");
             } catch (const std::exception& e) { 
@@ -178,7 +177,7 @@ QWidget* MainWindow::createArraySequenceTab()
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int val = currentArraySeq->Get(indexInput->text().toInt());
+                int val = currentArraySeq->Get(static_cast<size_t>(indexInput->text().toInt()));
                 updateOutput("Get(" + indexInput->text() + ") = " + QString::number(val));
             } catch (const std::exception& e) { 
                 updateOutput("Error: " + QString(e.what())); 
@@ -190,9 +189,9 @@ QWidget* MainWindow::createArraySequenceTab()
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int index = indexInput->text().toInt();
+                size_t index = static_cast<size_t>(indexInput->text().toInt());
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (int i = 0; i < currentArraySeq->GetLength(); i++) {
+                for (size_t i = 0; i < static_cast<size_t>(currentArraySeq->GetLength()); i++) {
                     if (i != index) {
                         newSeq->Append(currentArraySeq->Get(i));
                     }
@@ -212,7 +211,7 @@ QWidget* MainWindow::createArraySequenceTab()
         if (currentArraySeq->GetLength() > 0) {
             try {
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (int i = 1; i < currentArraySeq->GetLength(); i++) {
+                for (size_t i = 1; i < static_cast<size_t>(currentArraySeq->GetLength()); i++) {
                     newSeq->Append(currentArraySeq->Get(i));
                 }
                 delete currentArraySeq;
@@ -231,7 +230,7 @@ QWidget* MainWindow::createArraySequenceTab()
         if (currentArraySeq->GetLength() > 0) {
             try {
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (int i = 0; i < currentArraySeq->GetLength() - 1; i++) {
+                for (size_t i = 0; i < static_cast<size_t>(currentArraySeq->GetLength()) - 1; i++) {
                     newSeq->Append(currentArraySeq->Get(i));
                 }
                 delete currentArraySeq;
@@ -250,9 +249,9 @@ QWidget* MainWindow::createArraySequenceTab()
     connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* subseq = currentArraySeq->GetSubsequence(startInput->text().toInt(), endInput->text().toInt());
+                auto* subseq = currentArraySeq->GetSubsequence(static_cast<size_t>(startInput->text().toInt()), static_cast<size_t>(endInput->text().toInt()));
                 QString result = "Subsequence [";
-                for (int i = 0; i < subseq->GetLength(); i++) { 
+                for (size_t i = 0; i < static_cast<size_t>(subseq->GetLength()); i++) { 
                     result += QString::number(subseq->Get(i)); 
                     if (i < subseq->GetLength() - 1) result += ", "; 
                 }
@@ -269,7 +268,7 @@ QWidget* MainWindow::createArraySequenceTab()
     
     connect(concatBtn, &QPushButton::clicked, [this]() {
         auto* copy = new ArraySequence<int>();
-        for (int i = 0; i < currentArraySeq->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(currentArraySeq->GetLength()); i++) {
             copy->Append(currentArraySeq->Get(i));
         }
         auto* result = currentArraySeq->Concat(copy);
@@ -282,7 +281,7 @@ QWidget* MainWindow::createArraySequenceTab()
         if (currentArraySeq->GetLength() > 0) {
             auto* result = currentArraySeq->Map();
             QString res = "Map (+1): [";
-            for (int i = 0; i < result->GetLength(); i++) {
+            for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
@@ -298,7 +297,7 @@ QWidget* MainWindow::createArraySequenceTab()
         if (currentArraySeq->GetLength() > 0) {
             auto* result = currentArraySeq->Where();
             QString res = "Where (even numbers): [";
-            for (int i = 0; i < result->GetLength(); i++) {
+            for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
@@ -320,7 +319,7 @@ QWidget* MainWindow::createArraySequenceTab()
     });
     
     connect(findBtn, &QPushButton::clicked, [this]() {
-    Option<int> found = currentArraySeq->Find();
+        Option<int> found = currentArraySeq->Find();
         if (found.IsSome()) {
             updateOutput("Find: found value " + QString::number(found.GetValue()));
         } else {
@@ -411,7 +410,7 @@ QWidget* MainWindow::createListSequenceTab()
     connect(insertBtn, &QPushButton::clicked, [this, valueInput, indexInput]() {
         if (!valueInput->text().isEmpty() && !indexInput->text().isEmpty()) {
             try { 
-                currentListSeq->InsertAt(valueInput->text().toInt(), indexInput->text().toInt()); 
+                currentListSeq->InsertAt(valueInput->text().toInt(), static_cast<size_t>(indexInput->text().toInt())); 
                 displayListSequence(); 
                 updateOutput("List InsertAt(" + valueInput->text() + ", " + indexInput->text() + ")"); 
             } catch (const std::exception& e) { 
@@ -425,7 +424,7 @@ QWidget* MainWindow::createListSequenceTab()
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try { 
-                int val = currentListSeq->Get(indexInput->text().toInt()); 
+                int val = currentListSeq->Get(static_cast<size_t>(indexInput->text().toInt())); 
                 updateOutput("List Get(" + indexInput->text() + ") = " + QString::number(val)); 
             } catch (const std::exception& e) { 
                 updateOutput("Error: " + QString(e.what())); 
@@ -437,9 +436,9 @@ QWidget* MainWindow::createListSequenceTab()
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int index = indexInput->text().toInt();
+                size_t index = static_cast<size_t>(indexInput->text().toInt());
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (int i = 0; i < currentListSeq->GetLength(); i++) {
+                for (size_t i = 0; i < static_cast<size_t>(currentListSeq->GetLength()); i++) {
                     if (i != index) {
                         newSeq->Append(currentListSeq->Get(i));
                     }
@@ -459,7 +458,7 @@ QWidget* MainWindow::createListSequenceTab()
         if (currentListSeq->GetLength() > 0) {
             try {
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (int i = 1; i < currentListSeq->GetLength(); i++) {
+                for (size_t i = 1; i < static_cast<size_t>(currentListSeq->GetLength()); i++) {
                     newSeq->Append(currentListSeq->Get(i));
                 }
                 delete currentListSeq;
@@ -479,7 +478,7 @@ QWidget* MainWindow::createListSequenceTab()
         if (currentListSeq->GetLength() > 0) {
             try {
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (int i = 0; i < currentListSeq->GetLength() - 1; i++) {
+                for (size_t i = 0; i < static_cast<size_t>(currentListSeq->GetLength()) - 1; i++) {
                     newSeq->Append(currentListSeq->Get(i));
                 }
                 delete currentListSeq;
@@ -497,9 +496,9 @@ QWidget* MainWindow::createListSequenceTab()
     connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* subseq = currentListSeq->GetSubsequence(startInput->text().toInt(), endInput->text().toInt());
+                auto* subseq = currentListSeq->GetSubsequence(static_cast<size_t>(startInput->text().toInt()), static_cast<size_t>(endInput->text().toInt()));
                 QString result = "List subsequence [";
-                for (int i = 0; i < subseq->GetLength(); i++) { 
+                for (size_t i = 0; i < static_cast<size_t>(subseq->GetLength()); i++) { 
                     result += QString::number(subseq->Get(i)); 
                     if (i < subseq->GetLength() - 1) result += ", "; 
                 }
@@ -516,7 +515,7 @@ QWidget* MainWindow::createListSequenceTab()
     
     connect(concatBtn, &QPushButton::clicked, [this]() {
         auto* copy = new ListSequence<int>();
-        for (int i = 0; i < currentListSeq->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(currentListSeq->GetLength()); i++) {
             copy->Append(currentListSeq->Get(i));
         }
         auto* result = currentListSeq->Concat(copy);
@@ -529,7 +528,7 @@ QWidget* MainWindow::createListSequenceTab()
         if (currentListSeq->GetLength() > 0) {
             auto* result = currentListSeq->Map();
             QString res = "List Map (+1): [";
-            for (int i = 0; i < result->GetLength(); i++) {
+            for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
@@ -545,7 +544,7 @@ QWidget* MainWindow::createListSequenceTab()
         if (currentListSeq->GetLength() > 0) {
             auto* result = currentListSeq->Where();
             QString res = "List Where (even numbers): [";
-            for (int i = 0; i < result->GetLength(); i++) {
+            for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
@@ -641,7 +640,7 @@ QWidget* MainWindow::createBitSequenceTab()
     connect(setBtn, &QPushButton::clicked, [this, indexInput, valueCheck]() {
         if (!indexInput->text().isEmpty()) {
             try { 
-                currentBitSeq->SetBit(indexInput->text().toInt(), valueCheck->isChecked()); 
+                currentBitSeq->SetBit(static_cast<size_t>(indexInput->text().toInt()), valueCheck->isChecked()); 
                 displayBitSequence(); 
                 updateOutput("Bit SetBit(" + indexInput->text() + ", " + (valueCheck->isChecked() ? "1" : "0") + ")"); 
             } catch (const std::exception& e) { 
@@ -654,7 +653,7 @@ QWidget* MainWindow::createBitSequenceTab()
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try { 
-                bool val = currentBitSeq->GetBit(indexInput->text().toInt()); 
+                bool val = currentBitSeq->GetBit(static_cast<size_t>(indexInput->text().toInt())); 
                 updateOutput("Bit GetBit(" + indexInput->text() + ") = " + QString::number(val)); 
             } catch (const std::exception& e) { 
                 updateOutput("Error: " + QString(e.what())); 
@@ -666,18 +665,22 @@ QWidget* MainWindow::createBitSequenceTab()
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int index = indexInput->text().toInt();
-                BitSequence* newSeq = new BitSequence(currentBitSeq->GetLength() - 1);
-                int newIndex = 0;
-                for (int i = 0; i < currentBitSeq->GetLength(); i++) {
-                    if (i != index) {
-                        newSeq->SetBit(newIndex++, currentBitSeq->GetBit(i));
+                size_t index = static_cast<size_t>(indexInput->text().toInt());
+                if (index < static_cast<size_t>(currentBitSeq->GetLength())) {
+                    BitSequence* newSeq = new BitSequence(currentBitSeq->GetLength() - 1);
+                    size_t newIndex = 0;
+                    for (size_t i = 0; i < static_cast<size_t>(currentBitSeq->GetLength()); i++) {
+                        if (i != index) {
+                            newSeq->SetBit(newIndex++, currentBitSeq->GetBit(i));
+                        }
                     }
+                    delete currentBitSeq;
+                    currentBitSeq = newSeq;
+                    displayBitSequence();
+                    updateOutput("Bit RemoveBitAt(" + QString::number(index) + ")");
+                } else {
+                    updateOutput("Error: Index out of range");
                 }
-                delete currentBitSeq;
-                currentBitSeq = newSeq;
-                displayBitSequence();
-                updateOutput("Bit RemoveBitAt(" + QString::number(index) + ")");
             } catch (const std::exception& e) { 
                 updateOutput("Error: " + QString(e.what())); 
             }
@@ -689,7 +692,7 @@ QWidget* MainWindow::createBitSequenceTab()
         if (currentBitSeq->GetLength() > 0) {
             try {
                 BitSequence* newSeq = new BitSequence(currentBitSeq->GetLength() - 1);
-                for (int i = 1; i < currentBitSeq->GetLength(); i++) {
+                for (size_t i = 1; i < static_cast<size_t>(currentBitSeq->GetLength()); i++) {
                     newSeq->SetBit(i - 1, currentBitSeq->GetBit(i));
                 }
                 delete currentBitSeq;
@@ -708,7 +711,7 @@ QWidget* MainWindow::createBitSequenceTab()
         if (currentBitSeq->GetLength() > 0) {
             try {
                 BitSequence* newSeq = new BitSequence(currentBitSeq->GetLength() - 1);
-                for (int i = 0; i < currentBitSeq->GetLength() - 1; i++) {
+                for (size_t i = 0; i < static_cast<size_t>(currentBitSeq->GetLength()) - 1; i++) {
                     newSeq->SetBit(i, currentBitSeq->GetBit(i));
                 }
                 delete currentBitSeq;
@@ -727,7 +730,7 @@ QWidget* MainWindow::createBitSequenceTab()
         BitSequence copy(*currentBitSeq);
         auto* result = currentBitSeq->And(copy);
         QString res = "Bit AND result: ";
-        for (int i = 0; i < result->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
             res += QString::number(result->GetBit(i));
         }
         updateOutput(res); 
@@ -738,7 +741,7 @@ QWidget* MainWindow::createBitSequenceTab()
         BitSequence copy(*currentBitSeq);
         auto* result = currentBitSeq->Or(copy);
         QString res = "Bit OR result: ";
-        for (int i = 0; i < result->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
             res += QString::number(result->GetBit(i));
         }
         updateOutput(res); 
@@ -749,7 +752,7 @@ QWidget* MainWindow::createBitSequenceTab()
         BitSequence copy(*currentBitSeq);
         auto* result = currentBitSeq->Xor(copy);
         QString res = "Bit XOR result: ";
-        for (int i = 0; i < result->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
             res += QString::number(result->GetBit(i));
         }
         updateOutput(res); 
@@ -759,7 +762,7 @@ QWidget* MainWindow::createBitSequenceTab()
     connect(notBtn, &QPushButton::clicked, [this]() {
         auto* result = currentBitSeq->Not();
         QString res = "Bit NOT result: ";
-        for (int i = 0; i < result->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
             res += QString::number(result->GetBit(i));
         }
         updateOutput(res); 
@@ -769,9 +772,9 @@ QWidget* MainWindow::createBitSequenceTab()
     connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* subseq = currentBitSeq->GetSubsequence(startInput->text().toInt(), endInput->text().toInt());
+                auto* subseq = currentBitSeq->GetSubsequence(static_cast<size_t>(startInput->text().toInt()), static_cast<size_t>(endInput->text().toInt()));
                 QString res = "Bit subsequence: ";
-                for (int i = 0; i < subseq->GetLength(); i++) {
+                for (size_t i = 0; i < static_cast<size_t>(subseq->GetLength()); i++) {
                     res += QString::number(subseq->GetBit(i));
                 }
                 updateOutput(res); 
@@ -793,7 +796,7 @@ QWidget* MainWindow::createBitSequenceTab()
     connect(insertBtn, &QPushButton::clicked, [this, indexInput, valueCheck]() {
         if (!indexInput->text().isEmpty()) {
             try { 
-                currentBitSeq->InsertAt(Bit(valueCheck->isChecked()), indexInput->text().toInt()); 
+                currentBitSeq->InsertAt(Bit(valueCheck->isChecked()), static_cast<size_t>(indexInput->text().toInt())); 
                 displayBitSequence(); 
                 updateOutput("Bit InsertAt(" + QString::number(valueCheck->isChecked()) + ", " + indexInput->text() + ")"); 
             } catch (const std::exception& e) { 
@@ -804,7 +807,7 @@ QWidget* MainWindow::createBitSequenceTab()
     });
     
     connect(createBtn, &QPushButton::clicked, [this, sizeInput]() {
-        int size = sizeInput->text().isEmpty() ? 8 : sizeInput->text().toInt();
+        size_t size = sizeInput->text().isEmpty() ? 8 : static_cast<size_t>(sizeInput->text().toInt());
         delete currentBitSeq;
         currentBitSeq = new BitSequence(size);
         displayBitSequence(); 
@@ -883,7 +886,7 @@ QWidget* MainWindow::createLinkedListTab()
     connect(insertBtn, &QPushButton::clicked, [this, valueInput, indexInput]() {
         if (!valueInput->text().isEmpty() && !indexInput->text().isEmpty()) {
             try { 
-                currentLinkedList->InsertAt(valueInput->text().toInt(), indexInput->text().toInt()); 
+                currentLinkedList->InsertAt(valueInput->text().toInt(), static_cast<size_t>(indexInput->text().toInt())); 
                 displayLinkedList(); 
                 updateOutput("LinkedList InsertAt(" + valueInput->text() + ", " + indexInput->text() + ")"); 
             } catch (const std::exception& e) { 
@@ -897,7 +900,7 @@ QWidget* MainWindow::createLinkedListTab()
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try { 
-                int val = currentLinkedList->Get(indexInput->text().toInt()); 
+                int val = currentLinkedList->Get(static_cast<size_t>(indexInput->text().toInt())); 
                 updateOutput("LinkedList Get(" + indexInput->text() + ") = " + QString::number(val)); 
             } catch (const std::exception& e) { 
                 updateOutput("Error: " + QString(e.what())); 
@@ -909,9 +912,9 @@ QWidget* MainWindow::createLinkedListTab()
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int index = indexInput->text().toInt();
+                size_t index = static_cast<size_t>(indexInput->text().toInt());
                 LinkedList<int>* newList = new LinkedList<int>();
-                for (int i = 0; i < currentLinkedList->GetLength(); i++) {
+                for (size_t i = 0; i < static_cast<size_t>(currentLinkedList->GetLength()); i++) {
                     if (i != index) {
                         newList->Append(currentLinkedList->Get(i));
                     }
@@ -931,7 +934,7 @@ QWidget* MainWindow::createLinkedListTab()
         if (currentLinkedList->GetLength() > 0) {
             try {
                 LinkedList<int>* newList = new LinkedList<int>();
-                for (int i = 1; i < currentLinkedList->GetLength(); i++) {
+                for (size_t i = 1; i < static_cast<size_t>(currentLinkedList->GetLength()); i++) {
                     newList->Append(currentLinkedList->Get(i));
                 }
                 delete currentLinkedList;
@@ -950,7 +953,7 @@ QWidget* MainWindow::createLinkedListTab()
         if (currentLinkedList->GetLength() > 0) {
             try {
                 LinkedList<int>* newList = new LinkedList<int>();
-                for (int i = 0; i < currentLinkedList->GetLength() - 1; i++) {
+                for (size_t i = 0; i < static_cast<size_t>(currentLinkedList->GetLength()) - 1; i++) {
                     newList->Append(currentLinkedList->Get(i));
                 }
                 delete currentLinkedList;
@@ -969,9 +972,9 @@ QWidget* MainWindow::createLinkedListTab()
     connect(sublistBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* sublist = currentLinkedList->GetSubList(startInput->text().toInt(), endInput->text().toInt());
+                auto* sublist = currentLinkedList->GetSubList(static_cast<size_t>(startInput->text().toInt()), static_cast<size_t>(endInput->text().toInt()));
                 QString result = "LinkedList sublist [";
-                for (int i = 0; i < sublist->GetLength(); i++) { 
+                for (size_t i = 0; i < static_cast<size_t>(sublist->GetLength()); i++) { 
                     result += QString::number(sublist->Get(i)); 
                     if (i < sublist->GetLength() - 1) result += ", "; 
                 }
@@ -1001,7 +1004,7 @@ void MainWindow::displayArraySequence()
 {
     if (arrayDisplay && currentArraySeq) {
         QString text = "[";
-        for (int i = 0; i < currentArraySeq->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(currentArraySeq->GetLength()); i++) {
             text += QString::number(currentArraySeq->Get(i));
             if (i < currentArraySeq->GetLength() - 1) text += ", ";
         }
@@ -1014,7 +1017,7 @@ void MainWindow::displayListSequence()
 {
     if (listDisplay && currentListSeq) {
         QString text = "[";
-        for (int i = 0; i < currentListSeq->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(currentListSeq->GetLength()); i++) {
             text += QString::number(currentListSeq->Get(i));
             if (i < currentListSeq->GetLength() - 1) text += ", ";
         }
@@ -1027,7 +1030,7 @@ void MainWindow::displayBitSequence()
 {
     if (bitDisplay && currentBitSeq) {
         QString text = "";
-        for (int i = 0; i < currentBitSeq->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(currentBitSeq->GetLength()); i++) {
             text += QString::number(currentBitSeq->GetBit(i));
             if ((i + 1) % 8 == 0 && i < currentBitSeq->GetLength() - 1) text += " ";
         }
@@ -1040,7 +1043,7 @@ void MainWindow::displayLinkedList()
 {
     if (linkedDisplay && currentLinkedList) {
         QString text = "[";
-        for (int i = 0; i < currentLinkedList->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(currentLinkedList->GetLength()); i++) {
             text += QString::number(currentLinkedList->Get(i));
             if (i < currentLinkedList->GetLength() - 1) text += ", ";
         }

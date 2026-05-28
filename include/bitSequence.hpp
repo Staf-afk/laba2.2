@@ -19,27 +19,27 @@ public:
 
 class BitSequence : public Sequence<Bit> {
     unsigned char* data;
-    int bitLength;
+    size_t bitLength;
     
 public:
     BitSequence();
-    BitSequence(int size);
-    BitSequence(bool* bits, int count);
+    BitSequence(size_t size);
+    BitSequence(bool* bits, size_t count);
     BitSequence(const BitSequence& other);
     ~BitSequence();
     
-    void SetBit(int index, bool value);
-    bool GetBit(int index) const;
+    void SetBit(size_t index, bool value);
+    bool GetBit(size_t index) const;
     
     Bit GetFirst() override;
     Bit GetLast() override;
-    Bit Get(int index) override;
-    BitSequence* GetSubsequence(int startIndex, int endIndex) const override;
-    int GetLength() override;
+    Bit Get(size_t index) override;
+    BitSequence* GetSubsequence(size_t startIndex, size_t endIndex) const override;
+    size_t GetLength() override;
     
     BitSequence* Append(Bit item) override;
     BitSequence* Prepend(Bit item) override;
-    BitSequence* InsertAt(Bit item, int index) override;
+    BitSequence* InsertAt(Bit item, size_t index) override;
     BitSequence* Concat(Sequence<Bit>* list) override;
     
     BitSequence* Map() override;

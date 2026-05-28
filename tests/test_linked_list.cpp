@@ -19,6 +19,17 @@ private:
         }
     }
     
+    void assertEqual(size_t expected, size_t actual, const std::string& testName) {
+        if (expected == actual) {
+            std::cout << "  ? " << testName << " - ПРОЙДЕН" << std::endl;
+            passed++;
+        } else {
+            std::cout << "  ? " << testName << " - НЕ ПРОЙДЕН (Ожидалось: " << expected 
+                      << ", Получено: " << actual << ")" << std::endl;
+            failed++;
+        }
+    }
+    
     void assertTrue(bool condition, const std::string& testName) {
         if (condition) {
             std::cout << "  ? " << testName << " - ПРОЙДЕН" << std::endl;
@@ -31,7 +42,7 @@ private:
     
     void printList(LinkedList<int>* list, const std::string& label) {
         std::cout << "    " << label << ": [";
-        for (int i = 0; i < list->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(list->GetLength()); i++) {
             std::cout << list->Get(i);
             if (i < list->GetLength() - 1) std::cout << " ? ";
         }
@@ -43,12 +54,12 @@ public:
         std::cout << "\n--- Тесты конструкторов LinkedList ---" << std::endl;
         
         LinkedList<int> list1;
-        assertEqual(0, list1.GetLength(), "Конструктор по умолчанию - длина");
+        assertEqual(static_cast<size_t>(0), list1.GetLength(), "Конструктор по умолчанию - длина");
         std::cout << "    Создан пустой список" << std::endl;
         
         int items[] = {10, 20, 30, 40, 50};
         LinkedList<int> list2(items, 5);
-        assertEqual(5, list2.GetLength(), "Конструктор из массива - длина");
+        assertEqual(static_cast<size_t>(5), list2.GetLength(), "Конструктор из массива - длина");
         assertEqual(10, list2.GetFirst(), "Конструктор из массива - первый элемент");
         assertEqual(50, list2.GetLast(), "Конструктор из массива - последний элемент");
         
@@ -56,7 +67,7 @@ public:
         printList(&list2, "Созданный список");
         
         LinkedList<int> list3(list2);
-        assertEqual(5, list3.GetLength(), "Конструктор копирования - длина");
+        assertEqual(static_cast<size_t>(5), list3.GetLength(), "Конструктор копирования - длина");
         assertEqual(10, list3.GetFirst(), "Конструктор копирования - первый элемент");
     }
     
@@ -66,19 +77,19 @@ public:
         LinkedList<int> list;
         
         list.Append(10);
-        assertEqual(1, list.GetLength(), "Append первого элемента - длина");
+        assertEqual(static_cast<size_t>(1), list.GetLength(), "Append первого элемента - длина");
         assertEqual(10, list.GetFirst(), "Append первого элемента - значение");
         assertEqual(10, list.GetLast(), "Append первого элемента - последний");
         printList(&list, "После Append(10)");
         
         list.Append(20);
-        assertEqual(2, list.GetLength(), "Append второго элемента - длина");
+        assertEqual(static_cast<size_t>(2), list.GetLength(), "Append второго элемента - длина");
         assertEqual(10, list.GetFirst(), "Append второго элемента - первый не изменился");
         assertEqual(20, list.GetLast(), "Append второго элемента - последний обновлен");
         printList(&list, "После Append(20)");
         
         list.Prepend(5);
-        assertEqual(3, list.GetLength(), "Prepend элемента - длина");
+        assertEqual(static_cast<size_t>(3), list.GetLength(), "Prepend элемента - длина");
         assertEqual(5, list.GetFirst(), "Prepend элемента - новый первый");
         assertEqual(10, list.Get(1), "Prepend элемента - элементы сдвинуты");
         assertEqual(20, list.GetLast(), "Prepend элемента - последний не изменился");
@@ -96,17 +107,17 @@ public:
         std::cout << "    Ожидаемый результат: [10 ? 20 ? 30 ? 40 ? 50]" << std::endl;
         
         list.InsertAt(99, 0);
-        assertEqual(6, list.GetLength(), "Вставка в начало - длина");
+        assertEqual(static_cast<size_t>(6), list.GetLength(), "Вставка в начало - длина");
         assertEqual(99, list.GetFirst(), "Вставка в начало - значение");
         printList(&list, "После InsertAt(99, 0)");
         
         list.InsertAt(88, list.GetLength());
-        assertEqual(7, list.GetLength(), "Вставка в конец - длина");
+        assertEqual(static_cast<size_t>(7), list.GetLength(), "Вставка в конец - длина");
         assertEqual(88, list.GetLast(), "Вставка в конец - значение");
         printList(&list, "После InsertAt(88, в конец)");
         
         list.InsertAt(77, 3);
-        assertEqual(8, list.GetLength(), "Вставка в середину - длина");
+        assertEqual(static_cast<size_t>(8), list.GetLength(), "Вставка в середину - длина");
         assertEqual(77, list.Get(3), "Вставка в середину - значение на индексе 3");
         printList(&list, "После InsertAt(77, 3)");
         
@@ -157,7 +168,7 @@ public:
         printList(&list, "Исходный список");
         
         LinkedList<int>* sublist1 = list.GetSubList(0, 4);
-        assertEqual(5, sublist1->GetLength(), "Подсписок [0-4] - длина");
+        assertEqual(static_cast<size_t>(5), sublist1->GetLength(), "Подсписок [0-4] - длина");
         assertEqual(1, sublist1->GetFirst(), "Подсписок [0-4] - первый элемент");
         assertEqual(5, sublist1->GetLast(), "Подсписок [0-4] - последний элемент");
         printList(sublist1, "Подсписок [0-4]");
@@ -165,7 +176,7 @@ public:
         delete sublist1;
         
         LinkedList<int>* sublist2 = list.GetSubList(5, 9);
-        assertEqual(5, sublist2->GetLength(), "Подсписок [5-9] - длина");
+        assertEqual(static_cast<size_t>(5), sublist2->GetLength(), "Подсписок [5-9] - длина");
         assertEqual(6, sublist2->GetFirst(), "Подсписок [5-9] - первый элемент");
         assertEqual(10, sublist2->GetLast(), "Подсписок [5-9] - последний элемент");
         printList(sublist2, "Подсписок [5-9]");
@@ -173,7 +184,7 @@ public:
         delete sublist2;
         
         LinkedList<int>* sublist3 = list.GetSubList(3, 6);
-        assertEqual(4, sublist3->GetLength(), "Подсписок [3-6] - длина");
+        assertEqual(static_cast<size_t>(4), sublist3->GetLength(), "Подсписок [3-6] - длина");
         assertEqual(4, sublist3->GetFirst(), "Подсписок [3-6] - первый элемент");
         assertEqual(7, sublist3->GetLast(), "Подсписок [3-6] - последний элемент");
         printList(sublist3, "Подсписок [3-6]");
@@ -200,7 +211,7 @@ public:
         printList(&list2, "Список 2");
         
         LinkedList<int>* combined = list1.Concat(&list2);
-        assertEqual(6, combined->GetLength(), "Concat - правильная длина");
+        assertEqual(static_cast<size_t>(6), combined->GetLength(), "Concat - правильная длина");
         assertEqual(1, combined->GetFirst(), "Concat - первый элемент из списка 1");
         assertEqual(6, combined->GetLast(), "Concat - последний элемент из списка 2");
         
@@ -232,4 +243,3 @@ int main() {
     tests.runAll();
     return 0;
 }
-

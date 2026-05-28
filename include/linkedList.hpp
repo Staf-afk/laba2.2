@@ -12,22 +12,25 @@ class LinkedList {
 private:
     Node<T>* head;
     Node<T>* tail;
-    int length;
+    size_t length;
 public:
     LinkedList();
-    LinkedList(T* items, int count);
+    LinkedList(T* items, size_t count);
     LinkedList(const LinkedList<T>& other);
     ~LinkedList();
+    LinkedList(LinkedList<T>&& other) noexcept;
+    LinkedList<T>& operator=(const LinkedList<T>& other);
+    LinkedList<T>& operator=(LinkedList<T>&& other) noexcept;
     
     T GetFirst() const;
     T GetLast() const;
-    T Get(int index) const;
-    LinkedList<T>* GetSubList(int startIndex, int endIndex) const;
-    int GetLength() const;
+    T Get(size_t index) const;
+    LinkedList<T>* GetSubList(size_t startIndex, size_t endIndex) const;
+    size_t GetLength() const;
     
     void Append(T item);
     void Prepend(T item);
-    void InsertAt(T item, int index);
+    void InsertAt(T item, size_t index);
     LinkedList<T>* Concat(LinkedList<T>* list);
 };
 #include "../src/linkedList.tpp"

@@ -20,6 +20,17 @@ private:
         }
     }
     
+    void assertEqual(size_t expected, size_t actual, const std::string& testName) {
+        if (expected == actual) {
+            std::cout << "  " << testName << " - ПРОЙДЕН" << std::endl;
+            passed++;
+        } else {
+            std::cout << "  " << testName << " - НЕ ПРОЙДЕН (ожидалось: " << expected 
+                      << ", получено: " << actual << ")" << std::endl;
+            failed++;
+        }
+    }
+    
     void assertTrue(bool condition, const std::string& testName) {
         if (condition) {
             std::cout << "  " << testName << " - ПРОЙДЕН" << std::endl;
@@ -33,7 +44,7 @@ private:
     template<typename T>
     void printSequence(Sequence<T>* seq, const std::string& label) {
         std::cout << "    " << label << ": [";
-        for (int i = 0; i < seq->GetLength(); i++) {
+        for (size_t i = 0; i < static_cast<size_t>(seq->GetLength()); i++) {
             std::cout << seq->Get(i);
             if (i < seq->GetLength() - 1) std::cout << ", ";
         }
@@ -45,11 +56,11 @@ public:
         std::cout << "\n--- Конструкторы ArraySequence ---" << std::endl;
         
         ArraySequence<int> seq1;
-        assertEqual(0, seq1.GetLength(), "Конструктор по умолчанию");
+        assertEqual(static_cast<size_t>(0), seq1.GetLength(), "Конструктор по умолчанию");
         
         int items[] = {10, 20, 30, 40, 50};
         ArraySequence<int> seq2(items, 5);
-        assertEqual(5, seq2.GetLength(), "Конструктор из массива - длина");
+        assertEqual(static_cast<size_t>(5), seq2.GetLength(), "Конструктор из массива - длина");
         assertEqual(10, seq2.GetFirst(), "Первый элемент");
         assertEqual(50, seq2.GetLast(), "Последний элемент");
         assertEqual(30, seq2.Get(2), "Элемент с индексом 2");
@@ -61,7 +72,7 @@ public:
         list.Append(2);
         list.Append(3);
         ArraySequence<int> seq3(list);
-        assertEqual(3, seq3.GetLength(), "Конструктор из LinkedList");
+        assertEqual(static_cast<size_t>(3), seq3.GetLength(), "Конструктор из LinkedList");
         printSequence(&seq3, "ArraySequence из LinkedList");
     }
     
@@ -69,11 +80,11 @@ public:
         std::cout << "\n--- Конструкторы ListSequence ---" << std::endl;
         
         ListSequence<int> seq1;
-        assertEqual(0, seq1.GetLength(), "Конструктор по умолчанию");
+        assertEqual(static_cast<size_t>(0), seq1.GetLength(), "Конструктор по умолчанию");
         
         int items[] = {5, 15, 25, 35, 45};
         ListSequence<int> seq2(items, 5);
-        assertEqual(5, seq2.GetLength(), "Конструктор из массива");
+        assertEqual(static_cast<size_t>(5), seq2.GetLength(), "Конструктор из массива");
         assertEqual(5, seq2.GetFirst(), "Первый элемент");
         assertEqual(45, seq2.GetLast(), "Последний элемент");
         
@@ -84,7 +95,7 @@ public:
         list.Append(200);
         list.Append(300);
         ListSequence<int> seq3(list);
-        assertEqual(3, seq3.GetLength(), "Конструктор из LinkedList");
+        assertEqual(static_cast<size_t>(3), seq3.GetLength(), "Конструктор из LinkedList");
         printSequence(&seq3, "ListSequence из LinkedList");
     }
     
@@ -95,33 +106,33 @@ public:
         ArraySequence<int> arrSeq;
         arrSeq.Append(10)->Append(20)->Append(30);
         printSequence(&arrSeq, "После Append");
-        assertEqual(3, arrSeq.GetLength(), "Append - длина");
+        assertEqual(static_cast<size_t>(3), arrSeq.GetLength(), "Append - длина");
         assertEqual(30, arrSeq.GetLast(), "Последний элемент после Append");
         
         arrSeq.Prepend(5);
         printSequence(&arrSeq, "После Prepend(5)");
-        assertEqual(4, arrSeq.GetLength(), "Prepend - длина");
+        assertEqual(static_cast<size_t>(4), arrSeq.GetLength(), "Prepend - длина");
         assertEqual(5, arrSeq.GetFirst(), "Первый элемент после Prepend");
         
         arrSeq.InsertAt(99, 2);
         printSequence(&arrSeq, "После InsertAt(99, 2)");
-        assertEqual(5, arrSeq.GetLength(), "Insert - длина");
+        assertEqual(static_cast<size_t>(5), arrSeq.GetLength(), "Insert - длина");
         assertEqual(99, arrSeq.Get(2), "Значение на индексе 2");
         
         std::cout << "\n  ListSequence:" << std::endl;
         ListSequence<int> listSeq;
         listSeq.Append(10)->Append(20)->Append(30);
         printSequence(&listSeq, "После Append");
-        assertEqual(3, listSeq.GetLength(), "Append - длина");
+        assertEqual(static_cast<size_t>(3), listSeq.GetLength(), "Append - длина");
         
         listSeq.Prepend(5);
         printSequence(&listSeq, "После Prepend(5)");
-        assertEqual(4, listSeq.GetLength(), "Prepend - длина");
+        assertEqual(static_cast<size_t>(4), listSeq.GetLength(), "Prepend - длина");
         assertEqual(5, listSeq.GetFirst(), "Первый элемент");
         
         listSeq.InsertAt(99, 2);
         printSequence(&listSeq, "После InsertAt(99, 2)");
-        assertEqual(5, listSeq.GetLength(), "Insert - длина");
+        assertEqual(static_cast<size_t>(5), listSeq.GetLength(), "Insert - длина");
         assertEqual(99, listSeq.Get(2), "Значение на индексе 2");
     }
     
@@ -136,9 +147,9 @@ public:
         
         auto* mapped1 = arrSeq.Map();
         printSequence(mapped1, "Результат Map");
-        assertEqual(5, mapped1->GetLength(), "Длина не изменилась");
+        assertEqual(static_cast<size_t>(5), mapped1->GetLength(), "Длина не изменилась");
         assertEqual(2, mapped1->Get(0), "1+1=2");
-        assertEqual(6, mapped1->Get(1), "2+1=3");
+        assertEqual(3, mapped1->Get(1), "2+1=3");
         assertEqual(4, mapped1->Get(2), "3+1=4");
         assertEqual(5, mapped1->Get(3), "4+1=5");
         assertEqual(6, mapped1->Get(4), "5+1=6");
@@ -146,7 +157,7 @@ public:
         
         ArraySequence<int> emptySeq;
         auto* mappedEmpty = emptySeq.Map();
-        assertEqual(0, mappedEmpty->GetLength(), "Пустая последовательность");
+        assertEqual(static_cast<size_t>(0), mappedEmpty->GetLength(), "Пустая последовательность");
         delete mappedEmpty;
         
         std::cout << "\n  ListSequence:" << std::endl;
@@ -155,7 +166,7 @@ public:
         
         auto* mapped2 = listSeq.Map();
         printSequence(mapped2, "Результат Map");
-        assertEqual(5, mapped2->GetLength(), "Длина не изменилась");
+        assertEqual(static_cast<size_t>(5), mapped2->GetLength(), "Длина не изменилась");
         assertEqual(2, mapped2->Get(0), "1+1=2");
         assertEqual(3, mapped2->Get(1), "2+1=3");
         assertEqual(4, mapped2->Get(2), "3+1=4");
@@ -185,7 +196,7 @@ public:
         
         auto* filtered1 = arrSeq.Where();
         printSequence(filtered1, "Результат Where");
-        assertEqual(5, filtered1->GetLength(), "Только четные числа");
+        assertEqual(static_cast<size_t>(5), filtered1->GetLength(), "Только четные числа");
         assertEqual(2, filtered1->Get(0), "Первый четный = 2");
         assertEqual(4, filtered1->Get(1), "Второй четный = 4");
         assertEqual(6, filtered1->Get(2), "Третий четный = 6");
@@ -196,7 +207,7 @@ public:
         int oddItems[] = {1, 3, 5, 7, 9};
         ArraySequence<int> oddSeq(oddItems, 5);
         auto* filteredOdd = oddSeq.Where();
-        assertEqual(0, filteredOdd->GetLength(), "Нет четных чисел");
+        assertEqual(static_cast<size_t>(0), filteredOdd->GetLength(), "Нет четных чисел");
         delete filteredOdd;
         
         std::cout << "\n  ListSequence:" << std::endl;
@@ -204,7 +215,7 @@ public:
         
         auto* filtered2 = listSeq.Where();
         printSequence(filtered2, "Результат Where");
-        assertEqual(5, filtered2->GetLength(), "Только четные числа");
+        assertEqual(static_cast<size_t>(5), filtered2->GetLength(), "Только четные числа");
         assertEqual(2, filtered2->Get(0), "Первый четный = 2");
         assertEqual(4, filtered2->Get(1), "Второй четный = 4");
         assertEqual(6, filtered2->Get(2), "Третий четный = 6");
@@ -215,7 +226,7 @@ public:
         int evenItems[] = {2, 4, 6, 8, 10};
         ListSequence<int> evenSeq(evenItems, 5);
         auto* filteredEven = evenSeq.Where();
-        assertEqual(5, filteredEven->GetLength(), "Все числа четные");
+        assertEqual(static_cast<size_t>(5), filteredEven->GetLength(), "Все числа четные");
         delete filteredEven;
     }
     
@@ -267,25 +278,20 @@ public:
         ArraySequence<int> arrSeq(items, 5);
         printSequence(&arrSeq, "Последовательность");
         
-        Option<int> found1 = arrSeq.Find([](int x) { return x == 30; });
-        assertTrue(found1.IsSome(), "Поиск существующего значения");
-        assertEqual(30, found1.GetValue(), "Найденное значение");
-        
-        Option<int> found2 = arrSeq.Find([](int x) { return x == 100; });
-        assertTrue(found2.IsNone(), "Поиск несуществующего значения");
-        
-        Option<int> found3 = arrSeq.Find([](int x) { return x == 3; });
-        assertTrue(found3.IsNone(), "Поиск значения 3 - не найдено");
+        Option<int> found1 = arrSeq.Find();
+        assertTrue(found1.IsNone(), "Поиск значения 3 - не найдено");
         
         std::cout << "\n  ListSequence:" << std::endl;
         ListSequence<int> listSeq(items, 5);
         
-        Option<int> found4 = listSeq.Find([](int x) { return x == 50; });
-        assertTrue(found4.IsSome(), "Поиск последнего элемента");
-        assertEqual(50, found4.GetValue(), "Найденное значение");
+        Option<int> found2 = listSeq.Find();
+        assertTrue(found2.IsNone(), "Поиск значения 3 - не найдено");
         
-        Option<int> found5 = listSeq.Find([](int x) { return x == 3; });
-        assertTrue(found5.IsNone(), "Поиск значения 3 - не найдено");
+        int itemsWith3[] = {10, 20, 3, 40, 50};
+        ArraySequence<int> seqWith3(itemsWith3, 5);
+        Option<int> found3 = seqWith3.Find();
+        assertTrue(found3.IsSome(), "Поиск существующего значения 3");
+        assertEqual(3, found3.GetValue(), "Найденное значение");
     }
     
     void testGetSubsequence() {
@@ -299,14 +305,14 @@ public:
         
         auto* sub1 = arrSeq.GetSubsequence(2, 6);
         printSequence(sub1, "Подпоследовательность [2-6]");
-        assertEqual(5, sub1->GetLength(), "Длина");
+        assertEqual(static_cast<size_t>(5), sub1->GetLength(), "Длина");
         assertEqual(300, sub1->Get(0), "Начало на индексе 2");
         assertEqual(700, sub1->Get(4), "Конец на индексе 6");
         delete sub1;
         
         auto* sub2 = arrSeq.GetSubsequence(0, 4);
         printSequence(sub2, "Подпоследовательность [0-4]");
-        assertEqual(5, sub2->GetLength(), "Длина");
+        assertEqual(static_cast<size_t>(5), sub2->GetLength(), "Длина");
         assertEqual(100, sub2->GetFirst(), "Первый элемент");
         delete sub2;
         
@@ -322,7 +328,7 @@ public:
         
         auto* sub3 = listSeq.GetSubsequence(3, 8);
         printSequence(sub3, "Подпоследовательность [3-8]");
-        assertEqual(6, sub3->GetLength(), "Длина");
+        assertEqual(static_cast<size_t>(6), sub3->GetLength(), "Длина");
         assertEqual(400, sub3->GetFirst(), "Начало на индексе 3");
         assertEqual(900, sub3->GetLast(), "Конец на индексе 8");
         delete sub3;
@@ -392,4 +398,3 @@ int main() {
     tests.runAll();
     return 0;
 }
-
