@@ -23,7 +23,7 @@ class BitSequence : public Sequence<Bit> {
     
 public:
     BitSequence();
-    explicit BitSequence(int size);
+    BitSequence(int size);
     BitSequence(bool* bits, int count);
     BitSequence(const BitSequence& other);
     ~BitSequence();
