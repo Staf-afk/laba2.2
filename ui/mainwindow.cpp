@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "mainwindow.hpp"
 #include <QDebug>
 #include <QScrollBar>
 #include <QPushButton>
@@ -320,11 +320,11 @@ QWidget* MainWindow::createArraySequenceTab()
     });
     
     connect(findBtn, &QPushButton::clicked, [this]() {
-        Option<int> found = currentArraySeq->Find([](int x) { return x == 3; });
+    Option<int> found = currentArraySeq->Find();
         if (found.IsSome()) {
-            updateOutput("Find(value == 3): found value " + QString::number(found.GetValue()));
+            updateOutput("Find: found value " + QString::number(found.GetValue()));
         } else {
-            updateOutput("Find(value == 3): value not found");
+            updateOutput("Find: value 3 not found");
         }
     });
     
@@ -567,7 +567,7 @@ QWidget* MainWindow::createListSequenceTab()
     });
     
     connect(findBtn, &QPushButton::clicked, [this]() {
-        Option<int> found = currentListSeq->Find([](int x) { return x == 3; });
+        Option<int> found = currentListSeq->Find();
         if (found.IsSome()) {
             updateOutput("List Find(value == 3): found value " + QString::number(found.GetValue()));
         } else {

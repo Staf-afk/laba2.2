@@ -6,10 +6,18 @@ template<typename T> ListSequence<T>::ListSequence(T* items, int count) : items(
 template<typename T> ListSequence<T>::ListSequence(const LinkedList<T>& list) : items(new LinkedList<T>(list)) {}
 template<typename T> ListSequence<T>::~ListSequence() { delete items; }
 
-template<typename T> T ListSequence<T>::GetFirst() const { return items->GetFirst(); }
-template<typename T> T ListSequence<T>::GetLast() const { return items->GetLast(); }
-template<typename T> T ListSequence<T>::Get(int index) const { return items->Get(index); }
-template<typename T> int ListSequence<T>::GetLength() const { return items->GetLength(); }
+template<typename T> T ListSequence<T>::GetFirst() {
+    return items->GetFirst(); 
+}
+template<typename T> T ListSequence<T>::GetLast() { 
+    return items->GetLast(); 
+}
+template<typename T> T ListSequence<T>::Get(int index) { 
+    return items->Get(index); 
+}
+template<typename T> int ListSequence<T>::GetLength() { 
+    return items->GetLength(); 
+}
 
 template<typename T> ListSequence<T>* ListSequence<T>::GetSubsequence(int s, int e) const {
     if (s < 0 || e >= items->GetLength() || s > e) throw IndexOutOfRangeException();
@@ -32,12 +40,10 @@ ListSequence<T>* ListSequence<T>::Map() {
     if (len == 0) {
         return new ListSequence<T>();
     }
-    
     T* newData = new T[len];
     for (int i = 0; i < len; ++i) {
-        newData[i] = Get(i) + 1;  // Увеличиваем на 1
+        newData[i] = Get(i) + 1;
     }
-    
     ListSequence<T>* result = new ListSequence<T>(newData, len);
     delete[] newData;
     return result;
@@ -62,7 +68,6 @@ ListSequence<T>* ListSequence<T>::Where() {
             evenData[index++] = Get(i);
         }
     }
-    
     ListSequence<T>* result = new ListSequence<T>(evenData, evenCount);
     delete[] evenData;
     return result;
@@ -81,10 +86,12 @@ T ListSequence<T>::Reduce() {
     return sum;
 }
 
-template<typename T> 
-Option<T> ListSequence<T>::Find(std::function<bool(T)> pred) {
+template<typename T>
+Option<T> ListSequence<T>::Find() {
     for (int i = 0; i < GetLength(); ++i) {
-        if (pred(Get(i))) return Option<T>(Get(i));
+        if (Get(i) == 3) {
+            return Option<T>(Get(i));
+        }
     }
     return Option<T>();
 }

@@ -12,21 +12,21 @@ public:
     ListSequence(const LinkedList<T>& list);
     virtual ~ListSequence();
     
-    T GetFirst() const override;
-    T GetLast() const override;
-    T Get(int index) const override;
+    T GetFirst() override;
+    T GetLast() override;
+    T Get(int index) override;
     ListSequence<T>* GetSubsequence(int startIndex, int endIndex) const override;
-    int GetLength() const override;
+    int GetLength() override;
     
     ListSequence<T>* Append(T item) override;
     ListSequence<T>* Prepend(T item) override;
     ListSequence<T>* InsertAt(T item, int index) override;
     ListSequence<T>* Concat(Sequence<T>* list) override;
     
-    ListSequence<T>* Map();
-    ListSequence<T>* Where();
-    T Reduce();
-    Option<T> Find(std::function<bool(T)> predicate) override;
+    ListSequence<T>* Map() override;
+    ListSequence<T>* Where() override;
+    T Reduce() override;
+    Option<T> Find() override;
 };
 
 template<typename T> class MutableListSequence : public ListSequence<T> {

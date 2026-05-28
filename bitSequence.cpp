@@ -38,19 +38,19 @@ BitSequence::BitSequence(const BitSequence& o) : bitLength(o.bitLength) {
 
 BitSequence::~BitSequence() { delete[] data; }
 
-Bit BitSequence::GetFirst() const { 
+Bit BitSequence::GetFirst() { 
     if (bitLength == 0) throw EmptyCollectionException();
     return Bit(GetBit(0)); 
 }
 
-Bit BitSequence::GetLast() const { 
+Bit BitSequence::GetLast() { 
     if (bitLength == 0) throw EmptyCollectionException();
     return Bit(GetBit(bitLength - 1)); 
 }
 
-Bit BitSequence::Get(int i) const { return Bit(GetBit(i)); }
+Bit BitSequence::Get(int i) { return Bit(GetBit(i)); }
 
-int BitSequence::GetLength() const { return bitLength; }
+int BitSequence::GetLength() { return bitLength; }
 
 BitSequence* BitSequence::GetSubsequence(int s, int e) const {
     if (s < 0 || e >= bitLength || s > e) throw IndexOutOfRangeException();
@@ -102,20 +102,45 @@ BitSequence* BitSequence::Concat(Sequence<Bit>* list) {
     return this;
 }
 
-Sequence<Bit>* BitSequence::Where(std::function<bool(Bit)> pred) {
-    DynamicArray<Bit>* filtered = new DynamicArray<Bit>();
+BitSequence* BitSequence::Map() {
+    BitSequence* result = new BitSequence(bitLength);
     for (int i = 0; i < bitLength; ++i) {
-        if (pred(Get(i))) {
-            filtered->Resize(filtered->GetSize() + 1);
-            filtered->Set(filtered->GetSize() - 1, Get(i));
-        }
+        result->SetBit(i, !GetBit(i));
     }
-    return new ArraySequence<Bit>(filtered);
+    return result;
 }
 
-Option<Bit> BitSequence::Find(std::function<bool(Bit)> pred) {
+BitSequence* BitSequence::Where() {
+    int trueCount = 0;
     for (int i = 0; i < bitLength; ++i) {
-        if (pred(Get(i))) return Option<Bit>(Get(i));
+        if (GetBit(i)) trueCount++;
+    }
+    
+    BitSequence* result = new BitSequence(trueCount);
+    int index = 0;
+    for (int i = 0; i < bitLength; ++i) {
+        if (GetBit(i)) {
+            result->SetBit(index++, true);
+        }
+    }
+    return result;
+}
+
+Bit BitSequence::Reduce() {
+    if (bitLength == 0) return Bit(false);
+    
+    bool result = true;
+    for (int i = 0; i < bitLength; ++i) {
+        result = result && GetBit(i);
+    }
+    return Bit(result);
+}
+
+Option<Bit> BitSequence::Find() {
+    for (int i = 0; i < bitLength; ++i) {
+        if (GetBit(i) == true) {
+            return Option<Bit>(Bit(true));
+        }
     }
     return Option<Bit>();
 }

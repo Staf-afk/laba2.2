@@ -35,24 +35,24 @@ ArraySequence<T>::~ArraySequence() {
 }
 
 template<typename T>
-T ArraySequence<T>::GetFirst() const {
+T ArraySequence<T>::GetFirst() {
     if (items->GetSize() == 0) throw EmptyCollectionException();
     return items->Get(0);
 }
 
 template<typename T>
-T ArraySequence<T>::GetLast() const {
+T ArraySequence<T>::GetLast() {
     if (items->GetSize() == 0) throw EmptyCollectionException();
     return items->Get(items->GetSize() - 1);
 }
 
 template<typename T>
-T ArraySequence<T>::Get(int index) const {
+T ArraySequence<T>::Get(int index) {
     return items->Get(index);
 }
 
 template<typename T>
-int ArraySequence<T>::GetLength() const {
+int ArraySequence<T>::GetLength() {
     return items->GetSize();
 }
 
@@ -134,7 +134,6 @@ ArraySequence<T>* ArraySequence<T>::Where() {
             evenData[index++] = Get(i);
         }
     }
-    
     ArraySequence<T>* result = new ArraySequence<T>(evenData, evenCount);
     delete[] evenData;
     return result;
@@ -144,9 +143,8 @@ template<typename T>
 T ArraySequence<T>::Reduce() {
     int len = GetLength();
     if (len == 0) {
-        return T(0);  
+        return T(0);
     }
-    
     T sum = T(0);
     for (int i = 0; i < len; ++i) {
         sum = sum + Get(i);
@@ -155,10 +153,11 @@ T ArraySequence<T>::Reduce() {
 }
 
 template<typename T>
-Option<T> ArraySequence<T>::Find(std::function<bool(T)> predicate) {
-    if (!predicate) throw IndexOutOfRangeException("Find predicate cannot be null or empty");
+Option<T> ArraySequence<T>::Find() {
     for (int i = 0; i < GetLength(); ++i) {
-        if (predicate(Get(i))) return Option<T>(Get(i));
+        if (Get(i) == 3) {  
+            return Option<T>(Get(i));
+        }
     }
     return Option<T>();
 }

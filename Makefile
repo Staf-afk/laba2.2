@@ -30,13 +30,13 @@ all: $(TARGET)
 bitSequence.o: bitSequence.cpp $(INCLUDE_DIR)/bitSequence.hpp
 	$(CXX) $(CXXFLAGS_ALL) -c bitSequence.cpp -o bitSequence.o
 
-$(UI_DIR)/moc_mainwindow.cpp: $(UI_DIR)/mainwindow.h
+$(UI_DIR)/moc_mainwindow.cpp: $(UI_DIR)/mainwindow.hpp
 	$(QT_PATH)/bin/moc.exe $< -o $@
 
-$(UI_DIR)/main.o: $(UI_DIR)/main.cpp $(UI_DIR)/mainwindow.h
+$(UI_DIR)/main.o: $(UI_DIR)/main.cpp $(UI_DIR)/mainwindow.hpp
 	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
 
-$(UI_DIR)/mainwindow.o: $(UI_DIR)/mainwindow.cpp $(UI_DIR)/mainwindow.h $(UI_DIR)/moc_mainwindow.cpp
+$(UI_DIR)/mainwindow.o: $(UI_DIR)/mainwindow.cpp $(UI_DIR)/mainwindow.hpp $(UI_DIR)/moc_mainwindow.cpp
 	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
 
 $(UI_DIR)/moc_mainwindow.o: $(UI_DIR)/moc_mainwindow.cpp

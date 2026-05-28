@@ -31,21 +31,21 @@ public:
     void SetBit(int index, bool value);
     bool GetBit(int index) const;
     
-    Bit GetFirst() const override;
-    Bit GetLast() const override;
-    Bit Get(int index) const override;
+    Bit GetFirst() override;
+    Bit GetLast() override;
+    Bit Get(int index) override;
     BitSequence* GetSubsequence(int startIndex, int endIndex) const override;
-    int GetLength() const override;
+    int GetLength() override;
     
     BitSequence* Append(Bit item) override;
     BitSequence* Prepend(Bit item) override;
     BitSequence* InsertAt(Bit item, int index) override;
     BitSequence* Concat(Sequence<Bit>* list) override;
     
-    template<typename T2> Sequence<T2>* Map(std::function<T2(Bit)> func);
-    Sequence<Bit>* Where(std::function<bool(Bit)> predicate);
-    template<typename T2> T2 Reduce(std::function<T2(T2, Bit)> func, T2 initial);
-    Option<Bit> Find(std::function<bool(Bit)> predicate);
+    BitSequence* Map() override;
+    BitSequence* Where() override;
+    Bit Reduce() override;
+    Option<Bit> Find() override;
     
     BitSequence* And(const BitSequence& other) const;
     BitSequence* Or(const BitSequence& other) const;

@@ -14,21 +14,21 @@ public:
     ArraySequence(DynamicArray<T>* arr);
     virtual ~ArraySequence();
     
-    T GetFirst() const override;
-    T GetLast() const override;
-    T Get(int index) const override;
+    T GetFirst() override;
+    T GetLast() override;
+    T Get(int index) override;
     ArraySequence<T>* GetSubsequence(int startIndex, int endIndex) const override;
-    int GetLength() const override;
+    int GetLength() override;
     
     ArraySequence<T>* Append(T item) override;
     ArraySequence<T>* Prepend(T item) override;
     ArraySequence<T>* InsertAt(T item, int index) override;
     ArraySequence<T>* Concat(Sequence<T>* list) override;
     
-    ArraySequence<T>* Map();
-    ArraySequence<T>* Where();
-    T Reduce();
-    Option<T> Find(std::function<bool(T)> predicate) override;
+    ArraySequence<T>* Map() override;
+    ArraySequence<T>* Where() override;
+    T Reduce() override;
+    Option<T> Find() override;
 };
 
 template<typename T>
