@@ -12,9 +12,9 @@ public:
     ListSequence(const LinkedList<T>& list);
     virtual ~ListSequence();
     ListSequence(const ListSequence<T>& other);
-    ListSequence(ListSequence<T>&& other) noexcept;
+    ListSequence(ListSequence<T>&& other)  ;
     ListSequence<T>& operator=(const ListSequence<T>& other);
-    ListSequence<T>& operator=(ListSequence<T>&& other) noexcept;
+    ListSequence<T>& operator=(ListSequence<T>&& other)  ;
     
     T GetFirst() override;
     T GetLast() override;
@@ -31,6 +31,9 @@ public:
     ListSequence<T>* Where() override;
     T Reduce() override;
     Option<T> Find() override;
+
+    typename LinkedList<T>::LinkedListIterator begin() { return items->begin(); }
+    typename LinkedList<T>::LinkedListIterator end() { return items->end(); }
 };
 
 template<typename T> class MutableListSequence : public ListSequence<T> {

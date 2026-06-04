@@ -11,12 +11,12 @@ public:
     ArraySequence();
     ArraySequence(T* items, size_t count);
     ArraySequence(const LinkedList<T>& list);
-    ArraySequence(ArraySequence&& other) noexcept;
+    ArraySequence(ArraySequence&& other);
     ArraySequence(DynamicArray<T>* arr);
     virtual ~ArraySequence();
     ArraySequence(const ArraySequence<T>& other);
     ArraySequence<T>& operator=(const ArraySequence<T>& other);
-    ArraySequence<T>& operator=(ArraySequence<T>&& other) noexcept;
+    ArraySequence<T>& operator=(ArraySequence<T>&& other);
 
     T GetFirst() override;
     T GetLast() override;
@@ -33,6 +33,9 @@ public:
     ArraySequence<T>* Where() override;
     T Reduce() override;
     Option<T> Find() override;
+
+    typename DynamicArray<T>::DynamicArrayIterator begin() { return items->begin(); }
+    typename DynamicArray<T>::DynamicArrayIterator end() { return items->end(); }
 };
 
 template<typename T>
