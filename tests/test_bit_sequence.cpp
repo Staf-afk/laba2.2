@@ -41,7 +41,7 @@ private:
     
     void printBits(BitSequence* seq, const std::string& label) {
         std::cout << "    " << label << ": ";
-        for (size_t i = 0; i < static_cast<size_t>(seq->GetLength()); i++) {
+        for (size_t i = 0; i < (seq->GetLength()); i++) {
             std::cout << seq->GetBit(i);
             if ((i + 1) % 8 == 0 && i < seq->GetLength() - 1) std::cout << " ";
         }
@@ -53,11 +53,11 @@ public:
         std::cout << "\n--- Тесты конструкторов BitSequence ---" << std::endl;
         
         BitSequence seq1;
-        assertEqual(static_cast<size_t>(0), seq1.GetLength(), "Конструктор по умолчанию - длина");
+        assertEqual((0), seq1.GetLength(), "Конструктор по умолчанию - длина");
         std::cout << "    Создана пустая битовая последовательность" << std::endl;
         
         BitSequence seq2(16);
-        assertEqual(static_cast<size_t>(16), seq2.GetLength(), "Конструктор с размером - длина");
+        assertEqual((16), seq2.GetLength(), "Конструктор с размером - длина");
         for (size_t i = 0; i < 16; i++) {
             assertEqual(false, seq2.GetBit(i), "Конструктор с размером - бит " + std::to_string(i) + " = 0");
         }
@@ -65,7 +65,7 @@ public:
         
         bool bits[] = {1, 0, 1, 0, 1, 0, 1, 0};
         BitSequence seq3(bits, 8);
-        assertEqual(static_cast<size_t>(8), seq3.GetLength(), "Конструктор из массива - длина");
+        assertEqual((8), seq3.GetLength(), "Конструктор из массива - длина");
         assertEqual(true, seq3.GetBit(0), "Конструктор из массива - бит 0 = 1");
         assertEqual(false, seq3.GetBit(1), "Конструктор из массива - бит 1 = 0");
         assertEqual(true, seq3.GetBit(2), "Конструктор из массива - бит 2 = 1");
@@ -146,7 +146,7 @@ public:
         
         std::cout << "\n  Операция AND:" << std::endl;
         BitSequence* andResult = seq1.And(seq2);
-        assertEqual(static_cast<size_t>(8), andResult->GetLength(), "AND - длина результата");
+        assertEqual((8), andResult->GetLength(), "AND - длина результата");
         assertEqual(true, andResult->GetBit(0), "AND бит 0 (1 & 1) = 1");
         assertEqual(false, andResult->GetBit(1), "AND бит 1 (1 & 0) = 0");
         assertEqual(false, andResult->GetBit(4), "AND бит 4 (0 & 1) = 0");
@@ -176,7 +176,7 @@ public:
         
         std::cout << "\n  Операция NOT:" << std::endl;
         BitSequence* notResult = seq1.Not();
-        assertEqual(static_cast<size_t>(8), notResult->GetLength(), "NOT - длина результата");
+        assertEqual((8), notResult->GetLength(), "NOT - длина результата");
         assertEqual(false, notResult->GetBit(0), "NOT бит 0 = 0");
         assertEqual(true, notResult->GetBit(4), "NOT бит 4 = 1");
         printBits(notResult, "NOT A");
@@ -193,20 +193,20 @@ public:
         std::cout << "    Исходная: 1010" << std::endl;
         
         seq.Append(Bit(true));
-        assertEqual(static_cast<size_t>(5), seq.GetLength(), "Append - длина увеличена");
+        assertEqual((5), seq.GetLength(), "Append - длина увеличена");
         assertEqual(true, seq.GetBit(4), "Append - значение добавлено в конец");
         printBits(&seq, "После Append(1)");
         std::cout << "    Результат: 10101" << std::endl;
         
         seq.Prepend(Bit(false));
-        assertEqual(static_cast<size_t>(6), seq.GetLength(), "Prepend - длина увеличена");
+        assertEqual((6), seq.GetLength(), "Prepend - длина увеличена");
         assertEqual(false, seq.GetBit(0), "Prepend - значение в начале");
         assertEqual(true, seq.GetBit(1), "Prepend - исходные значения сдвинуты");
         printBits(&seq, "После Prepend(0)");
         std::cout << "    Результат: 010101" << std::endl;
         
         seq.InsertAt(Bit(1), 3);
-        assertEqual(static_cast<size_t>(7), seq.GetLength(), "InsertAt - длина увеличена");
+        assertEqual((7), seq.GetLength(), "InsertAt - длина увеличена");
         assertEqual(true, seq.GetBit(3), "InsertAt - значение вставлено на индекс 3");
         printBits(&seq, "После InsertAt(1, 3)");
         std::cout << "    Результат: 0101101" << std::endl;
@@ -221,7 +221,7 @@ public:
         std::cout << "    Исходная: 10101010 10101010" << std::endl;
         
         BitSequence* subseq = seq.GetSubsequence(2, 5);
-        assertEqual(static_cast<size_t>(4), subseq->GetLength(), "Подпоследовательность [2-5] - длина");
+        assertEqual((4), subseq->GetLength(), "Подпоследовательность [2-5] - длина");
         assertEqual(true, subseq->GetBit(0), "Подпоследовательность бит 0 = 1");
         assertEqual(false, subseq->GetBit(1), "Подпоследовательность бит 1 = 0");
         assertEqual(true, subseq->GetBit(2), "Подпоследовательность бит 2 = 1");

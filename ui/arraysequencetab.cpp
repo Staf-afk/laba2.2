@@ -81,7 +81,7 @@ QWidget* MainWindow::createArraySequenceTab()
     connect(insertBtn, &QPushButton::clicked, [this, valueInput, indexInput]() {
         if (!valueInput->text().isEmpty() && !indexInput->text().isEmpty()) {
             try {
-                currentArraySeq->InsertAt(valueInput->text().toInt(), static_cast<size_t>(indexInput->text().toInt()));
+                currentArraySeq->InsertAt(valueInput->text().toInt(), (indexInput->text().toInt()));
                 displayArraySequence();
                 updateOutput("InsertAt(" + valueInput->text() + ", " + indexInput->text() + ")");
             } catch (const std::exception& e) {
@@ -94,7 +94,7 @@ QWidget* MainWindow::createArraySequenceTab()
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int val = currentArraySeq->Get(static_cast<size_t>(indexInput->text().toInt()));
+                int val = currentArraySeq->Get((indexInput->text().toInt()));
                 updateOutput("Get(" + indexInput->text() + ") = " + QString::number(val));
             } catch (const std::exception& e) {
                 updateOutput("Ошибка: " + QString(e.what()));
@@ -105,9 +105,9 @@ QWidget* MainWindow::createArraySequenceTab()
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                size_t index = static_cast<size_t>(indexInput->text().toInt());
+                size_t index = (indexInput->text().toInt());
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (size_t i = 0; i < static_cast<size_t>(currentArraySeq->GetLength()); i++) {
+                for (size_t i = 0; i < (currentArraySeq->GetLength()); i++) {
                     if (i != index) newSeq->Append(currentArraySeq->Get(i));
                 }
                 delete currentArraySeq;
@@ -124,7 +124,7 @@ QWidget* MainWindow::createArraySequenceTab()
         if (currentArraySeq->GetLength() > 0) {
             try {
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (size_t i = 1; i < static_cast<size_t>(currentArraySeq->GetLength()); i++) {
+                for (size_t i = 1; i < (currentArraySeq->GetLength()); i++) {
                     newSeq->Append(currentArraySeq->Get(i));
                 }
                 delete currentArraySeq;
@@ -142,7 +142,7 @@ QWidget* MainWindow::createArraySequenceTab()
         if (currentArraySeq->GetLength() > 0) {
             try {
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (size_t i = 0; i < static_cast<size_t>(currentArraySeq->GetLength()) - 1; i++) {
+                for (size_t i = 0; i < (currentArraySeq->GetLength()) - 1; i++) {
                     newSeq->Append(currentArraySeq->Get(i));
                 }
                 delete currentArraySeq;
@@ -159,9 +159,9 @@ QWidget* MainWindow::createArraySequenceTab()
     connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* subseq = currentArraySeq->GetSubsequence(static_cast<size_t>(startInput->text().toInt()), static_cast<size_t>(endInput->text().toInt()));
+                auto* subseq = currentArraySeq->GetSubsequence((startInput->text().toInt()), (endInput->text().toInt()));
                 QString result = "Подпоследовательность [";
-                for (size_t i = 0; i < static_cast<size_t>(subseq->GetLength()); i++) {
+                for (size_t i = 0; i < (subseq->GetLength()); i++) {
                     result += QString::number(subseq->Get(i));
                     if (i < subseq->GetLength() - 1) result += ", ";
                 }
@@ -177,7 +177,7 @@ QWidget* MainWindow::createArraySequenceTab()
     });
     connect(concatBtn, &QPushButton::clicked, [this]() {
         auto* copy = new ArraySequence<int>();
-        for (size_t i = 0; i < static_cast<size_t>(currentArraySeq->GetLength()); i++) copy->Append(currentArraySeq->Get(i));
+        for (size_t i = 0; i < (currentArraySeq->GetLength()); i++) copy->Append(currentArraySeq->Get(i));
         auto* result = currentArraySeq->Concat(copy);
         updateOutput("Concat: создана новая последовательность с дубликатом");
         delete copy; delete result;
@@ -186,7 +186,7 @@ QWidget* MainWindow::createArraySequenceTab()
         if (currentArraySeq->GetLength() > 0) {
             auto* result = currentArraySeq->Map();
             QString res = "Map (+1): [";
-            for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
+            for (size_t i = 0; i < (result->GetLength()); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
@@ -197,7 +197,7 @@ QWidget* MainWindow::createArraySequenceTab()
         if (currentArraySeq->GetLength() > 0) {
             auto* result = currentArraySeq->Where();
             QString res = "Where (чётные числа): [";
-            for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
+            for (size_t i = 0; i < (result->GetLength()); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }

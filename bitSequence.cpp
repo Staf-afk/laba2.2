@@ -92,7 +92,7 @@ BitSequence* BitSequence::Concat(Sequence<Bit>* list) {
     if (!list) return new BitSequence(*this);
     BitSequence* r = new BitSequence(bitLength + list->GetLength());
     for (size_t i = 0; i < bitLength; ++i) r->SetBit(i, GetBit(i));
-    for (size_t i = 0; i < static_cast<size_t>(list->GetLength()); ++i) r->SetBit(bitLength + i, list->Get(i).GetValue());
+    for (size_t i = 0; i < (list->GetLength()); ++i) r->SetBit(bitLength + i, list->Get(i).GetValue());
     delete[] data; 
     data = r->data; 
     bitLength = r->bitLength; 

@@ -81,7 +81,7 @@ QWidget* MainWindow::createListSequenceTab()
     connect(insertBtn, &QPushButton::clicked, [this, valueInput, indexInput]() {
         if (!valueInput->text().isEmpty() && !indexInput->text().isEmpty()) {
             try {
-                currentListSeq->InsertAt(valueInput->text().toInt(), static_cast<size_t>(indexInput->text().toInt()));
+                currentListSeq->InsertAt(valueInput->text().toInt(), (indexInput->text().toInt()));
                 displayListSequence();
                 updateOutput("List InsertAt(" + valueInput->text() + ", " + indexInput->text() + ")");
             } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
@@ -91,7 +91,7 @@ QWidget* MainWindow::createListSequenceTab()
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int val = currentListSeq->Get(static_cast<size_t>(indexInput->text().toInt()));
+                int val = currentListSeq->Get((indexInput->text().toInt()));
                 updateOutput("List Get(" + indexInput->text() + ") = " + QString::number(val));
             } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
             indexInput->clear();
@@ -100,9 +100,9 @@ QWidget* MainWindow::createListSequenceTab()
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                size_t index = static_cast<size_t>(indexInput->text().toInt());
+                size_t index = (indexInput->text().toInt());
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (size_t i = 0; i < static_cast<size_t>(currentListSeq->GetLength()); i++) {
+                for (size_t i = 0; i < (currentListSeq->GetLength()); i++) {
                     if (i != index) newSeq->Append(currentListSeq->Get(i));
                 }
                 delete currentListSeq; currentListSeq = newSeq;
@@ -116,7 +116,7 @@ QWidget* MainWindow::createListSequenceTab()
         if (currentListSeq->GetLength() > 0) {
             try {
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (size_t i = 1; i < static_cast<size_t>(currentListSeq->GetLength()); i++) newSeq->Append(currentListSeq->Get(i));
+                for (size_t i = 1; i < (currentListSeq->GetLength()); i++) newSeq->Append(currentListSeq->Get(i));
                 delete currentListSeq; currentListSeq = newSeq;
                 displayListSequence(); updateOutput("List RemoveFirst()");
             } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
@@ -126,7 +126,7 @@ QWidget* MainWindow::createListSequenceTab()
         if (currentListSeq->GetLength() > 0) {
             try {
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (size_t i = 0; i < static_cast<size_t>(currentListSeq->GetLength()) - 1; i++) newSeq->Append(currentListSeq->Get(i));
+                for (size_t i = 0; i < (currentListSeq->GetLength()) - 1; i++) newSeq->Append(currentListSeq->Get(i));
                 delete currentListSeq; currentListSeq = newSeq;
                 displayListSequence(); updateOutput("List RemoveLast()");
             } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
@@ -135,9 +135,9 @@ QWidget* MainWindow::createListSequenceTab()
     connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* subseq = currentListSeq->GetSubsequence(static_cast<size_t>(startInput->text().toInt()), static_cast<size_t>(endInput->text().toInt()));
+                auto* subseq = currentListSeq->GetSubsequence((startInput->text().toInt()), (endInput->text().toInt()));
                 QString result = "List подпоследовательность [";
-                for (size_t i = 0; i < static_cast<size_t>(subseq->GetLength()); i++) {
+                for (size_t i = 0; i < (subseq->GetLength()); i++) {
                     result += QString::number(subseq->Get(i));
                     if (i < subseq->GetLength() - 1) result += ", ";
                 }
@@ -148,7 +148,7 @@ QWidget* MainWindow::createListSequenceTab()
     });
     connect(concatBtn, &QPushButton::clicked, [this]() {
         auto* copy = new ListSequence<int>();
-        for (size_t i = 0; i < static_cast<size_t>(currentListSeq->GetLength()); i++) copy->Append(currentListSeq->Get(i));
+        for (size_t i = 0; i < (currentListSeq->GetLength()); i++) copy->Append(currentListSeq->Get(i));
         auto* result = currentListSeq->Concat(copy);
         updateOutput("List Concat: создана новая последовательность");
         delete copy; delete result;
@@ -157,7 +157,7 @@ QWidget* MainWindow::createListSequenceTab()
         if (currentListSeq->GetLength() > 0) {
             auto* result = currentListSeq->Map();
             QString res = "List Map (+1): [";
-            for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
+            for (size_t i = 0; i < (result->GetLength()); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
@@ -168,7 +168,7 @@ QWidget* MainWindow::createListSequenceTab()
         if (currentListSeq->GetLength() > 0) {
             auto* result = currentListSeq->Where();
             QString res = "List Where (чётные числа): [";
-            for (size_t i = 0; i < static_cast<size_t>(result->GetLength()); i++) {
+            for (size_t i = 0; i < (result->GetLength()); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }

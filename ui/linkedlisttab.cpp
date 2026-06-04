@@ -71,7 +71,7 @@ QWidget* MainWindow::createLinkedListTab()
     connect(insertBtn, &QPushButton::clicked, [this, valueInput, indexInput]() {
         if (!valueInput->text().isEmpty() && !indexInput->text().isEmpty()) {
             try {
-                currentLinkedList->InsertAt(valueInput->text().toInt(), static_cast<size_t>(indexInput->text().toInt()));
+                currentLinkedList->InsertAt(valueInput->text().toInt(), (indexInput->text().toInt()));
                 displayLinkedList();
                 updateOutput("LinkedList InsertAt(" + valueInput->text() + ", " + indexInput->text() + ")");
             } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
@@ -81,7 +81,7 @@ QWidget* MainWindow::createLinkedListTab()
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int val = currentLinkedList->Get(static_cast<size_t>(indexInput->text().toInt()));
+                int val = currentLinkedList->Get((indexInput->text().toInt()));
                 updateOutput("LinkedList Get(" + indexInput->text() + ") = " + QString::number(val));
             } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
             indexInput->clear();
@@ -90,9 +90,9 @@ QWidget* MainWindow::createLinkedListTab()
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                size_t index = static_cast<size_t>(indexInput->text().toInt());
+                size_t index = (indexInput->text().toInt());
                 LinkedList<int>* newList = new LinkedList<int>();
-                for (size_t i = 0; i < static_cast<size_t>(currentLinkedList->GetLength()); i++) {
+                for (size_t i = 0; i < (currentLinkedList->GetLength()); i++) {
                     if (i != index) newList->Append(currentLinkedList->Get(i));
                 }
                 delete currentLinkedList; currentLinkedList = newList;
@@ -105,7 +105,7 @@ QWidget* MainWindow::createLinkedListTab()
         if (currentLinkedList->GetLength() > 0) {
             try {
                 LinkedList<int>* newList = new LinkedList<int>();
-                for (size_t i = 1; i < static_cast<size_t>(currentLinkedList->GetLength()); i++) newList->Append(currentLinkedList->Get(i));
+                for (size_t i = 1; i < (currentLinkedList->GetLength()); i++) newList->Append(currentLinkedList->Get(i));
                 delete currentLinkedList; currentLinkedList = newList;
                 displayLinkedList(); updateOutput("LinkedList RemoveFirst()");
             } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
@@ -115,7 +115,7 @@ QWidget* MainWindow::createLinkedListTab()
         if (currentLinkedList->GetLength() > 0) {
             try {
                 LinkedList<int>* newList = new LinkedList<int>();
-                for (size_t i = 0; i < static_cast<size_t>(currentLinkedList->GetLength()) - 1; i++) newList->Append(currentLinkedList->Get(i));
+                for (size_t i = 0; i < (currentLinkedList->GetLength()) - 1; i++) newList->Append(currentLinkedList->Get(i));
                 delete currentLinkedList; currentLinkedList = newList;
                 displayLinkedList(); updateOutput("LinkedList RemoveLast()");
             } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
@@ -124,9 +124,9 @@ QWidget* MainWindow::createLinkedListTab()
     connect(sublistBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* sublist = currentLinkedList->GetSubList(static_cast<size_t>(startInput->text().toInt()), static_cast<size_t>(endInput->text().toInt()));
+                auto* sublist = currentLinkedList->GetSubList((startInput->text().toInt()), (endInput->text().toInt()));
                 QString result = "LinkedList подсписок [";
-                for (size_t i = 0; i < static_cast<size_t>(sublist->GetLength()); i++) {
+                for (size_t i = 0; i < (sublist->GetLength()); i++) {
                     result += QString::number(sublist->Get(i));
                     if (i < sublist->GetLength() - 1) result += ", ";
                 }

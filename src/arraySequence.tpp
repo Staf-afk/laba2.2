@@ -23,7 +23,7 @@ ArraySequence<T>::ArraySequence(const LinkedList<T>& list) : items(new DynamicAr
 }
 
 template<typename T>
-ArraySequence<T>::ArraySequence(ArraySequence&& other) noexcept
+ArraySequence<T>::ArraySequence(ArraySequence&& other)  
     : items(other.items) 
 {
     other.items = nullptr;
@@ -51,7 +51,7 @@ ArraySequence<T>& ArraySequence<T>::operator=(const ArraySequence<T>& other) {
 }
 
 template<typename T>
-ArraySequence<T>& ArraySequence<T>::operator=(ArraySequence<T>&& other) noexcept {
+ArraySequence<T>& ArraySequence<T>::operator=(ArraySequence<T>&& other)   {
     if (this != &other) {
         delete items;
         items = other.items;
@@ -96,11 +96,17 @@ template<typename T>
 ArraySequence<T>* ArraySequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const {
     size_t size = items->GetSize();
     if (startIndex > endIndex || startIndex >= size || endIndex >= size) {
-        throw IndexOutOfRangeException("Invalid subsequence range [" + std::to_string(startIndex) + ", " + std::to_string(endIndex) + "]");
+        throw IndexOutOfRangeException("Invalid subsequence range [" + std::to_string(startIndex) + ", " + std::to_string(endIndex) + "]");   
     }
     size_t len = endIndex - startIndex + 1;
     T* newData = new T[len];
-    for (size_t i = 0; i < len; ++i) newData[i] = items->Get(startIndex + i);
+    auto it = items->begin();
+    for (size_t i = 0; i < startIndex; ++i) ++it;
+    for (size_t i = 0; i < len; ++i) {
+        newData[i] = *it;
+        ++it;
+    }
+    
     ArraySequence<T>* result = new ArraySequence<T>(newData, len);
     delete[] newData;
     return result;
@@ -132,7 +138,7 @@ template<typename T>
 ArraySequence<T>* ArraySequence<T>::Concat(Sequence<T>* list) {
     if (!list) throw NullPointerArgumentException("Cannot concatenate with null sequence");
     ArraySequence<T>* res = new ArraySequence<T>(*this);
-    for (size_t i = 0; i < static_cast<size_t>(list->GetLength()); ++i) res->Append(list->Get(i));
+    for (size_t i = 0; i < (list->GetLength()); ++i) res->Append(list->Get(i));
     return res;
 }
 
@@ -143,8 +149,9 @@ ArraySequence<T>* ArraySequence<T>::Map() {
         return new ArraySequence<T>();
     }
     T* newData = new T[len];
-    for (size_t i = 0; i < len; ++i) {
-        newData[i] = Get(i) + 1;
+    size_t i = 0;
+    for (auto& item : *this) {
+        newData[i++] = item + 1;
     }
     ArraySequence<T>* result = new ArraySequence<T>(newData, len);
     delete[] newData;
@@ -158,16 +165,16 @@ ArraySequence<T>* ArraySequence<T>::Where() {
         return new ArraySequence<T>();
     }
     size_t evenCount = 0;
-    for (size_t i = 0; i < len; ++i) {
-        if (Get(i) % 2 == 0) {
+    for (auto& item : *this) {
+        if (item % 2 == 0) {
             evenCount++;
         }
     }
     T* evenData = new T[evenCount];
-    size_t index = 0;
-    for (size_t i = 0; i < len; ++i) {
-        if (Get(i) % 2 == 0) {
-            evenData[index++] = Get(i);
+    size_t i = 0;
+    for (auto& item : *this) {
+        if (item % 2 == 0) {
+            evenData[i++] = item;
         }
     }
     ArraySequence<T>* result = new ArraySequence<T>(evenData, evenCount);
@@ -182,17 +189,17 @@ T ArraySequence<T>::Reduce() {
         return T(0);
     }
     T sum = T(0);
-    for (size_t i = 0; i < len; ++i) {
-        sum = sum + Get(i);
+    for (auto& item : *this) {
+        sum = sum + item;
     }
     return sum;
 }
 
 template<typename T>
 Option<T> ArraySequence<T>::Find() {
-    for (size_t i = 0; i < GetLength(); ++i) {
-        if (Get(i) == 3) {  
-            return Option<T>(Get(i));
+    for (auto& item : *this) {
+        if (item == 3) {
+            return Option<T>(item);
         }
     }
     return Option<T>();
