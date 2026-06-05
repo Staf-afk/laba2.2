@@ -9,10 +9,9 @@ UI_DIR = ui
 INCLUDE_DIR = include
 TESTS_DIR = tests
 
-OBJECTS = $(UI_DIR)/main.o $(UI_DIR)/mainwindow.o $(UI_DIR)/arraysequencetab.o $(UI_DIR)/listsequencetab.o $(UI_DIR)/bitsequencetab.o $(UI_DIR)/linkedlisttab.o $(UI_DIR)/moc_mainwindow.o bitSequence.o
+OBJECTS = $(UI_DIR)/main.o $(UI_DIR)/mainwindow.o $(UI_DIR)/arraysequencetab.o $(UI_DIR)/listsequencetab.o $(UI_DIR)/bitsequencetab.o $(UI_DIR)/linkedlisttab.o $(UI_DIR)/setsequencetab.o $(UI_DIR)/moc_mainwindow.o bitSequence.o 
 TARGET = laba2_2.exe
 
-# ���� ᮡ�ࠥ� �� 䫠�� � ���� ��६�����
 CXXFLAGS_ALL = $(CXXFLAGS) $(QT_INCLUDES) $(WIN_OPTIONS)
 
 .SUFFIXES:
@@ -34,6 +33,9 @@ $(UI_DIR)/mainwindow.o: $(UI_DIR)/mainwindow.cpp $(UI_DIR)/mainwindow.hpp $(UI_D
 $(UI_DIR)/arraysequencetab.o: $(UI_DIR)/arraysequencetab.cpp $(UI_DIR)/mainwindow.hpp
 	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
 
+$(UI_DIR)/setsequencetab.o: $(UI_DIR)/setsequencetab.cpp $(UI_DIR)/mainwindow.hpp
+	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+
 $(UI_DIR)/listsequencetab.o: $(UI_DIR)/listsequencetab.cpp $(UI_DIR)/mainwindow.hpp
 	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
 
@@ -52,10 +54,12 @@ $(TARGET): $(OBJECTS)
 test: bitSequence.o
 	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_dynamic_array.cpp -o $(TESTS_DIR)/test_dynamic_array.exe
 	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_linked_list.cpp -o $(TESTS_DIR)/test_linked_list.exe
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_set_sequence.cpp -o $(TESTS_DIR)/test_set_sequence.exe
 	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_bit_sequence.cpp bitSequence.o -o $(TESTS_DIR)/test_bit_sequence.exe
 	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_sequences.cpp -o $(TESTS_DIR)/test_sequences.exe
 	$(TESTS_DIR)/test_dynamic_array.exe
 	$(TESTS_DIR)/test_linked_list.exe
+	$(TESTS_DIR)/test_set_sequence.exe
 	$(TESTS_DIR)/test_bit_sequence.exe
 	$(TESTS_DIR)/test_sequences.exe
 

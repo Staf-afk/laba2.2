@@ -21,6 +21,7 @@
 #include "../include/listSequence.hpp"
 #include "../include/bitSequence.hpp"
 #include "../include/linkedList.hpp"
+#include "../include/setSequence.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -40,24 +41,28 @@ private:
     ListSequence<int>* currentListSeq;
     BitSequence* currentBitSeq;
     LinkedList<int>* currentLinkedList;
+    SetSequence<int>* currentSetSeq;
 
     QTextEdit* outputTextEdit;
     QTextEdit* arrayDisplay;
     QTextEdit* listDisplay;
     QTextEdit* bitDisplay;
     QTextEdit* linkedDisplay;
+    QTextEdit* setDisplay;
 
     void updateOutput(const QString& text);
     void displayArraySequence();
     void displayListSequence();
     void displayBitSequence();
     void displayLinkedList();
+    void displaySetSequence();
     
     void setupUI();
     QWidget* createArraySequenceTab();
     QWidget* createListSequenceTab();
     QWidget* createBitSequenceTab();
     QWidget* createLinkedListTab();
+    QWidget* createSetSequenceTab();
 };
 
 #endif 
