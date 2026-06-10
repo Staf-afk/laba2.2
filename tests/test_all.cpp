@@ -24,7 +24,7 @@ int main() {
     runTest("Тесты LinkedList", "./test_linked_list.exe");
     runTest("Тесты BitSequence", "./test_bit_sequence.exe");
     runTest("Тесты последовательностей (ArraySequence и ListSequence)", "./test_sequences.exe");
-    runTest("Тесты SetSequence (Множество)", "./test_set_sequence.exe");  // ? добавить эту строку
+    runTest("Тесты SetSequence (Множество)", "./test_set_sequence.exe");
     
     std::cout << "\n" << std::string(80, '=') << std::endl;
     std::cout << "ВСЕ ТЕСТЫ ЗАВЕРШЕНЫ" << std::endl;

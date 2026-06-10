@@ -9,7 +9,22 @@ UI_DIR = ui
 INCLUDE_DIR = include
 TESTS_DIR = tests
 
-OBJECTS = $(UI_DIR)/main.o $(UI_DIR)/mainwindow.o $(UI_DIR)/arraysequencetab.o $(UI_DIR)/listsequencetab.o $(UI_DIR)/bitsequencetab.o $(UI_DIR)/linkedlisttab.o $(UI_DIR)/setsequencetab.o $(UI_DIR)/moc_mainwindow.o bitSequence.o 
+OBJECTS = $(UI_DIR)/main.o \
+          $(UI_DIR)/mainwindow.o \
+          $(UI_DIR)/arraysequencetab.o \
+          $(UI_DIR)/listsequencetab.o \
+          $(UI_DIR)/bitsequencetab.o \
+          $(UI_DIR)/linkedlisttab.o \
+          $(UI_DIR)/setsequence_int_tab.o \
+          $(UI_DIR)/setsequence_double_tab.o \
+          $(UI_DIR)/setsequence_complex_tab.o \
+          $(UI_DIR)/setsequence_string_tab.o \
+          $(UI_DIR)/setsequence_function_tab.o \
+          $(UI_DIR)/setsequence_person_tab.o \
+          $(UI_DIR)/setsequence_pair_tab.o \
+          $(UI_DIR)/moc_mainwindow.o \
+          bitSequence.o 
+
 TARGET = laba2_2.exe
 
 CXXFLAGS_ALL = $(CXXFLAGS) $(QT_INCLUDES) $(WIN_OPTIONS)
@@ -33,9 +48,6 @@ $(UI_DIR)/mainwindow.o: $(UI_DIR)/mainwindow.cpp $(UI_DIR)/mainwindow.hpp $(UI_D
 $(UI_DIR)/arraysequencetab.o: $(UI_DIR)/arraysequencetab.cpp $(UI_DIR)/mainwindow.hpp
 	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
 
-$(UI_DIR)/setsequencetab.o: $(UI_DIR)/setsequencetab.cpp $(UI_DIR)/mainwindow.hpp
-	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
-
 $(UI_DIR)/listsequencetab.o: $(UI_DIR)/listsequencetab.cpp $(UI_DIR)/mainwindow.hpp
 	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
 
@@ -43,6 +55,27 @@ $(UI_DIR)/bitsequencetab.o: $(UI_DIR)/bitsequencetab.cpp $(UI_DIR)/mainwindow.hp
 	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
 
 $(UI_DIR)/linkedlisttab.o: $(UI_DIR)/linkedlisttab.cpp $(UI_DIR)/mainwindow.hpp
+	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+
+$(UI_DIR)/setsequence_int_tab.o: $(UI_DIR)/setsequenceinttab.cpp $(UI_DIR)/mainwindow.hpp
+	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+
+$(UI_DIR)/setsequence_double_tab.o: $(UI_DIR)/setsequencedoubletab.cpp $(UI_DIR)/mainwindow.hpp
+	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+
+$(UI_DIR)/setsequence_complex_tab.o: $(UI_DIR)/setsequencecomplextab.cpp $(UI_DIR)/mainwindow.hpp
+	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+
+$(UI_DIR)/setsequence_string_tab.o: $(UI_DIR)/setsequencestringtab.cpp $(UI_DIR)/mainwindow.hpp
+	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+
+$(UI_DIR)/setsequence_function_tab.o: $(UI_DIR)/setsequencefunctiontab.cpp $(UI_DIR)/mainwindow.hpp
+	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+
+$(UI_DIR)/setsequence_person_tab.o: $(UI_DIR)/setsequencepersontab.cpp $(UI_DIR)/mainwindow.hpp
+	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+
+$(UI_DIR)/setsequence_pair_tab.o: $(UI_DIR)/setsequencepairtab.cpp $(UI_DIR)/mainwindow.hpp
 	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
 
 $(UI_DIR)/moc_mainwindow.o: $(UI_DIR)/moc_mainwindow.cpp

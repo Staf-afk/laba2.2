@@ -2,6 +2,10 @@
 #include <string>
 #include "../include/dynamicArray.hpp"
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+
 class DynamicArrayTests {
 private:
     int passed = 0;
@@ -9,11 +13,11 @@ private:
     
     void assertEqual(int expected, int actual, const std::string& testName) {
         if (expected == actual) {
-            std::cout << "  [OK] " << testName << std::endl;
+            std::cout <<GREEN << "  [PASS] " << RESET << testName << std::endl;
             passed++;
         } 
         else {
-            std::cout << "  [FAIL] " << testName << " (Ž¦¨¤ «®áì: " << expected 
+            std::cout << RED << "  [FAIL] " << RESET << testName << " (Ž¦¨¤ «®áì: " << expected 
                       << ", ®«ãç¥­®: " << actual << ")" << std::endl;
             failed++;
         }
@@ -21,11 +25,11 @@ private:
     
     void assertEqual(size_t expected, size_t actual, const std::string& testName) {
         if (expected == actual) {
-            std::cout << "  [OK] " << testName << std::endl;
+            std::cout <<GREEN << "  [PASS] " << RESET << testName << std::endl;
             passed++;
         } 
         else {
-            std::cout << "  [FAIL] " << testName << " (Ž¦¨¤ «®áì: " << expected 
+            std::cout << RED << "  [FAIL] " << RESET << testName << " (Ž¦¨¤ «®áì: " << expected 
                       << ", ®«ãç¥­®: " << actual << ")" << std::endl;
             failed++;
         }
@@ -33,10 +37,10 @@ private:
     
     void assertTrue(bool condition, const std::string& testName) {
         if (condition) {
-            std::cout << "  [OK] " << testName << std::endl;
+            std::cout <<GREEN << "  [PASS] " << RESET << testName << std::endl;
             passed++;
         } else {
-            std::cout << "  [FAIL] " << testName << std::endl;
+            std::cout << RED << "  [FAIL] " << RESET << testName << std::endl;
             failed++;
         }
     }

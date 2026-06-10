@@ -4,6 +4,7 @@
 #include "arraySequence.hpp"
 #include "linkedList.hpp"
 #include "listSequence.hpp"
+#include <functional>
 
 template<typename T>
 class SetSequence : public Sequence<T> {
@@ -34,9 +35,13 @@ public:
     SetSequence<T>* InsertAt(T item, size_t index) override;
     SetSequence<T>* Concat(Sequence<T>* list) override;
 
+    SetSequence<T>* Map(std::function<T(T)> func);
     SetSequence<T>* Map() override;
+    SetSequence<T>* Where(std::function<bool(T)> predicate);
     SetSequence<T>* Where() override;
+    T Reduce(std::function<T(T, T)> func, T initial);
     T Reduce() override;
+    Option<T> Find(std::function<bool(T)> predicate);
     Option<T> Find() override;
 
     typename DynamicArray<T>::DynamicArrayIterator begin() {
@@ -56,4 +61,5 @@ public:
 };
 
 #include "../src/setSequence.tpp"
+
 

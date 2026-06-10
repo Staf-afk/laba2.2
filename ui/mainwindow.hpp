@@ -22,6 +22,7 @@
 #include "../include/bitSequence.hpp"
 #include "../include/linkedList.hpp"
 #include "../include/setSequence.hpp"
+#include "../include/setTypes.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -41,28 +42,58 @@ private:
     ListSequence<int>* currentListSeq;
     BitSequence* currentBitSeq;
     LinkedList<int>* currentLinkedList;
-    SetSequence<int>* currentSetSeq;
+    
+    SetSequence<int>* currentSetSeqInt;
+    SetSequence<double>* currentSetSeqDouble;
+    SetSequence<Complex>* currentSetSeqComplex;
+    SetSequence<QString>* currentSetSeqString;
+    SetSequence<FunctionWrapper<int>>* currentSetSeqFunction;
+    SetSequence<Person>* currentSetSeqPerson;
+    SetSequence<Pair<int, QString>>* currentSetSeqPair;
 
     QTextEdit* outputTextEdit;
     QTextEdit* arrayDisplay;
     QTextEdit* listDisplay;
     QTextEdit* bitDisplay;
     QTextEdit* linkedDisplay;
-    QTextEdit* setDisplay;
+    
+    QTextEdit* setDisplayInt;
+    QTextEdit* setDisplayDouble;
+    QTextEdit* setDisplayComplex;
+    QTextEdit* setDisplayString;
+    QTextEdit* setDisplayFunction;
+    QTextEdit* setDisplayPerson;
+    QTextEdit* setDisplayPair;
 
     void updateOutput(const QString& text);
+    
     void displayArraySequence();
     void displayListSequence();
     void displayBitSequence();
     void displayLinkedList();
-    void displaySetSequence();
+    
+    void displaySetSequenceInt();
+    void displaySetSequenceDouble();
+    void displaySetSequenceComplex();
+    void displaySetSequenceString();
+    void displaySetSequenceFunction();
+    void displaySetSequencePerson();
+    void displaySetSequencePair();
     
     void setupUI();
+    
     QWidget* createArraySequenceTab();
     QWidget* createListSequenceTab();
     QWidget* createBitSequenceTab();
     QWidget* createLinkedListTab();
-    QWidget* createSetSequenceTab();
+    
+    QWidget* createSetSequenceIntTab();
+    QWidget* createSetSequenceDoubleTab();
+    QWidget* createSetSequenceComplexTab();
+    QWidget* createSetSequenceStringTab();
+    QWidget* createSetSequenceFunctionTab();
+    QWidget* createSetSequencePersonTab();
+    QWidget* createSetSequencePairTab();
 };
 
-#endif 
+#endif

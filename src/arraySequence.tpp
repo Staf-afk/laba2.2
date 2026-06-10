@@ -144,64 +144,25 @@ ArraySequence<T>* ArraySequence<T>::Concat(Sequence<T>* list) {
 
 template<typename T>
 ArraySequence<T>* ArraySequence<T>::Map() {
-    size_t len = GetLength();
-    if (len == 0) {
-        return new ArraySequence<T>();
-    }
-    T* newData = new T[len];
-    size_t i = 0;
-    for (auto& item : *this) {
-        newData[i++] = item + 1;
-    }
-    ArraySequence<T>* result = new ArraySequence<T>(newData, len);
-    delete[] newData;
-    return result;
+    throw std::runtime_error("Map requires a function parameter. Use Map(std::function<T(T)> func) instead.");
+    return this;
 }
 
 template<typename T>
 ArraySequence<T>* ArraySequence<T>::Where() {
-    size_t len = GetLength();
-    if (len == 0) {
-        return new ArraySequence<T>();
-    }
-    size_t evenCount = 0;
-    for (auto& item : *this) {
-        if (item % 2 == 0) {
-            evenCount++;
-        }
-    }
-    T* evenData = new T[evenCount];
-    size_t i = 0;
-    for (auto& item : *this) {
-        if (item % 2 == 0) {
-            evenData[i++] = item;
-        }
-    }
-    ArraySequence<T>* result = new ArraySequence<T>(evenData, evenCount);
-    delete[] evenData;
-    return result;
+    throw std::runtime_error("Where requires a predicate parameter. Use Where(std::function<bool(T)> pred) instead.");
+    return this;
 }
 
 template<typename T>
 T ArraySequence<T>::Reduce() {
-    size_t len = GetLength();
-    if (len == 0) {
-        return T(0);
-    }
-    T sum = T(0);
-    for (auto& item : *this) {
-        sum = sum + item;
-    }
-    return sum;
+    throw std::runtime_error("Reduce requires a function parameter. Use Reduce(std::function<T(T,T)> func, T initial) instead.");
+    return T();
 }
 
 template<typename T>
 Option<T> ArraySequence<T>::Find() {
-    for (auto& item : *this) {
-        if (item == 3) {
-            return Option<T>(item);
-        }
-    }
+    throw std::runtime_error("Find requires a predicate parameter. Use Find(std::function<bool(T)> pred) instead.");
     return Option<T>();
 }
 

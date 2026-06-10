@@ -65,7 +65,7 @@ SetSequence<T>::SetSequence(const ListSequence<T>& seq) {
 }
 
 template<typename T>
-SetSequence<T>::SetSequence(SetSequence<T>& other) { 
+SetSequence<T>::SetSequence(SetSequence<T>& other) {
     data = new ArraySequence<T>();
     for (size_t i = 0; i < other.GetLength(); ++i) {
         data->Append(other.Get(i));
@@ -154,10 +154,10 @@ SetSequence<T>* SetSequence<T>::Concat(Sequence<T>* list) {
 }
 
 template<typename T>
-SetSequence<T>* SetSequence<T>::Map() {
+SetSequence<T>* SetSequence<T>::Map(std::function<T(T)> func) {
     SetSequence<T>* result = new SetSequence<T>();
     for (size_t i = 0; i < GetLength(); ++i) {
-        T newVal = Get(i) + 1;
+        T newVal = func(Get(i));
         SetSequence<T>* temp = result->Append(newVal);
         delete result;
         result = temp;
@@ -166,11 +166,17 @@ SetSequence<T>* SetSequence<T>::Map() {
 }
 
 template<typename T>
-SetSequence<T>* SetSequence<T>::Where() {
+SetSequence<T>* SetSequence<T>::Map() {
+    throw std::runtime_error("Map requires a function parameter. Use Map(std::function<T(T)> func) instead.");
+    return this;
+}
+
+template<typename T>
+SetSequence<T>* SetSequence<T>::Where(std::function<bool(T)> predicate) {
     SetSequence<T>* result = new SetSequence<T>();
     for (size_t i = 0; i < GetLength(); ++i) {
         T val = Get(i);
-        if (val % 2 == 0) {
+        if (predicate(val)) {
             SetSequence<T>* temp = result->Append(val);
             delete result;
             result = temp;
@@ -180,22 +186,41 @@ SetSequence<T>* SetSequence<T>::Where() {
 }
 
 template<typename T>
-T SetSequence<T>::Reduce() {
-    if (GetLength() == 0) return T(0);
-    T sum = T(0);
-    for (size_t i = 0; i < GetLength(); ++i) {
-        sum = sum + Get(i);
-    }
-    return sum;
+SetSequence<T>* SetSequence<T>::Where() {
+    throw std::runtime_error("Where requires a predicate parameter. Use Where(std::function<bool(T)> pred) instead.");
+    return this;
 }
 
 template<typename T>
-Option<T> SetSequence<T>::Find() {
+T SetSequence<T>::Reduce(std::function<T(T, T)> func, T initial) {
+    if (GetLength() == 0) return initial;
+    T result = initial;
     for (size_t i = 0; i < GetLength(); ++i) {
-        if (Get(i) == 3) {
+        result = func(result, Get(i));
+    }
+    return result;
+}
+
+template<typename T>
+T SetSequence<T>::Reduce() {
+    throw std::runtime_error("Reduce requires a function parameter. Use Reduce(std::function<T(T,T)> func, T initial) instead.");
+    return T();
+}
+
+template<typename T>
+Option<T> SetSequence<T>::Find(std::function<bool(T)> predicate) {
+    for (size_t i = 0; i < GetLength(); ++i) {
+        if (predicate(Get(i))) {
             return Option<T>(Get(i));
         }
     }
     return Option<T>();
 }
+
+template<typename T>
+Option<T> SetSequence<T>::Find() {
+    throw std::runtime_error("Find requires a predicate parameter. Use Find(std::function<bool(T)> pred) instead.");
+    return Option<T>();
+}
+
 
