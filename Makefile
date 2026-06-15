@@ -7,20 +7,17 @@ WIN_OPTIONS = -DUNICODE -DWIN32 -DWIN64
 
 UI_DIR = ui
 INCLUDE_DIR = include
-TESTS_DIR = tests
 
-OBJECTS = $(UI_DIR)/main.o $(UI_DIR)/mainwindow.o $(UI_DIR)/arraysequencetab.o $(UI_DIR)/listsequencetab.o $(UI_DIR)/bitsequencetab.o $(UI_DIR)/linkedlisttab.o $(UI_DIR)/moc_mainwindow.o bitSequence.o
+OBJECTS = $(UI_DIR)/main.o $(UI_DIR)/mainwindow.o $(UI_DIR)/arraysequencetab.o $(UI_DIR)/listsequencetab.o \
+          $(UI_DIR)/bitsequencetab.o $(UI_DIR)/linkedlisttab.o $(UI_DIR)/moc_mainwindow.o bitSequence.o
 TARGET = laba2_2.exe
 
-# ���� ᮡ�ࠥ� �� 䫠�� � ���� ��६�����
 CXXFLAGS_ALL = $(CXXFLAGS) $(QT_INCLUDES) $(WIN_OPTIONS)
-
-.SUFFIXES:
 
 all: $(TARGET)
 
 bitSequence.o: bitSequence.cpp $(INCLUDE_DIR)/bitSequence.hpp
-	$(CXX) $(CXXFLAGS_ALL) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -Iinclude -c $< -o $@
 
 $(UI_DIR)/moc_mainwindow.cpp: $(UI_DIR)/mainwindow.hpp
 	$(QT_PATH)/bin/moc.exe $< -o $@
@@ -49,24 +46,24 @@ $(UI_DIR)/moc_mainwindow.o: $(UI_DIR)/moc_mainwindow.cpp
 $(TARGET): $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $(TARGET) $(QT_LIBS) -static-libgcc -static-libstdc++
 
+
 test: bitSequence.o
-	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_dynamic_array.cpp -o $(TESTS_DIR)/test_dynamic_array.exe
-	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_linked_list.cpp -o $(TESTS_DIR)/test_linked_list.exe
-	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_bit_sequence.cpp bitSequence.o -o $(TESTS_DIR)/test_bit_sequence.exe
-	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ $(TESTS_DIR)/test_sequences.cpp -o $(TESTS_DIR)/test_sequences.exe
-	$(TESTS_DIR)/test_dynamic_array.exe
-	$(TESTS_DIR)/test_linked_list.exe
-	$(TESTS_DIR)/test_bit_sequence.exe
-	$(TESTS_DIR)/test_sequences.exe
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ tests/test_dynamic_array.cpp -o tests/test_dynamic_array.exe
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ tests/test_linked_list.cpp -o tests/test_linked_list.exe
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ tests/test_bit_sequence.cpp bitSequence.o -o tests/test_bit_sequence.exe
+	$(CXX) $(CXXFLAGS) -Iinclude -static-libgcc -static-libstdc++ tests/test_sequences.cpp -o tests/test_sequences.exe
+	cd tests && test_dynamic_array.exe
+	cd tests && test_linked_list.exe
+	cd tests && test_bit_sequence.exe
+	cd tests && test_sequences.exe
 
 clean:
-	if exist $(UI_DIR)\\*.o del /f /q $(UI_DIR)\\*.o
-	if exist $(UI_DIR)\\moc_*.cpp del /f /q $(UI_DIR)\\moc_*.cpp
-	if exist bitSequence.o del /f /q bitSequence.o
-	if exist $(TARGET) del /f /q $(TARGET)
-	if exist $(TESTS_DIR)\\*.exe del /f /q $(TESTS_DIR)\\*.exe
+	del /f /q $(UI_DIR)\\*.o 2>nul
+	del /f /q $(UI_DIR)\\moc_*.cpp 2>nul
+	del /f /q bitSequence.o 2>nul
+	del /f /q $(TARGET) 2>nul
 
 run: $(TARGET)
 	$(TARGET)
 
-.PHONY: all clean run test
+.PHONY: all clean run

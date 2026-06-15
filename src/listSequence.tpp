@@ -2,160 +2,117 @@
 #include "../include/exceptions.cpp"
 
 template<typename T>
-ListSequence<T>::ListSequence() : items(new LinkedList<T>()) {}
+ListSequence<T>::ListSequence() : items() {}
 
 template<typename T> 
-ListSequence<T>::ListSequence(T* items, size_t count) : items(new LinkedList<T>(items, count)) {}
+ListSequence<T>::ListSequence(T* itemsArr, size_t count) : items(itemsArr, count) {}
 
 template<typename T> 
-ListSequence<T>::ListSequence(const LinkedList<T>& list) : items(new LinkedList<T>(list)) {}
+ListSequence<T>::ListSequence(const LinkedList<T>& list) : items(list) {}
 
 template<typename T>
-ListSequence<T>::~ListSequence() {
-    delete items;
-}
+ListSequence<T>::ListSequence(const ListSequence<T>& other) : items(other.items) {}
 
 template<typename T>
-ListSequence<T>::ListSequence(ListSequence&& other)  
-    : items(other.items)
-{
-    other.items = nullptr;
-}
+ListSequence<T>::ListSequence(ListSequence<T>&& other) : items(std::move(other.items)) {}
 
 template<typename T>
-ListSequence<T>::ListSequence(const ListSequence<T>& other)
-    : items(nullptr) 
-{
-    if (other.items != nullptr) {
-        items = new LinkedList<T>(*other.items);
-    }
-}
+ListSequence<T>::~ListSequence() {}
 
 template<typename T>
 ListSequence<T>& ListSequence<T>::operator=(const ListSequence<T>& other) {
     if (this != &other) {
-        delete items;
-        items = nullptr;
-        if (other.items != nullptr) {
-            items = new LinkedList<T>(*other.items);
-        }
+        items = other.items;
     }
     return *this;
 }
 
 template<typename T>
-ListSequence<T>& ListSequence<T>::operator=(ListSequence<T>&& other)   {
+ListSequence<T>& ListSequence<T>::operator=(ListSequence<T>&& other) {
     if (this != &other) {
-        delete items;
-        items = other.items;
-        other.items = nullptr;
+        items = std::move(other.items);
     }
     return *this;
 }
 
 template<typename T> 
-T ListSequence<T>::GetFirst() {
-    return items->GetFirst(); 
+T ListSequence<T>::GetFirst() { 
+    return items.GetFirst(); 
 }
 
 template<typename T> 
 T ListSequence<T>::GetLast() { 
-    return items->GetLast(); 
+    return items.GetLast(); 
 }
 
 template<typename T> 
 T ListSequence<T>::Get(size_t index) { 
-    return items->Get(index); 
+    return items.Get(index); 
 }
 
 template<typename T> 
 size_t ListSequence<T>::GetLength() { 
-    return items->GetLength(); 
+    return items.GetLength(); 
 }
 
 template<typename T> 
-ListSequence<T>* ListSequence<T>::GetSubsequence(size_t s, size_t e) const {
-    if (s > e || e >= items->GetLength()) throw IndexOutOfRangeException();
-    return new ListSequence<T>(*items->GetSubList(s, e));
+ListSequence<T>* ListSequence<T>::GetSubsequence(size_t start, size_t end) const {
+    if (start > end || end >= items.GetLength()) throw IndexOutOfRangeException();
+    LinkedList<T>* sublist = items.GetSubList(start, end);
+    ListSequence<T>* result = new ListSequence<T>(*sublist);
+    delete sublist;
+    return result;
 }
 
 template<typename T> 
-ListSequence<T>* ListSequence<T>::Append(T item) { items->Append(item); return this; }
+ListSequence<T>* ListSequence<T>::Append(T item) { 
+    items.Append(item); 
+    return this; 
+}
 
 template<typename T> 
-ListSequence<T>* ListSequence<T>::Prepend(T item) { items->Prepend(item); return this; }
+ListSequence<T>* ListSequence<T>::Prepend(T item) { 
+    items.Prepend(item); 
+    return this; 
+}
 
 template<typename T> 
-ListSequence<T>* ListSequence<T>::InsertAt(T item, size_t idx) { items->InsertAt(item, idx); return this; }
+ListSequence<T>* ListSequence<T>::InsertAt(T item, size_t index) { 
+    items.InsertAt(item, index); 
+    return this; 
+}
 
 template<typename T> 
 ListSequence<T>* ListSequence<T>::Concat(Sequence<T>* list) {
     if (!list) return new ListSequence<T>(*this);
-    LinkedList<T>* combined = new LinkedList<T>(*items);
-    for (size_t i = 0; i < list->GetLength(); ++i) combined->Append(list->Get(i));
-    return new ListSequence<T>(*combined);
+    ListSequence<T>* result = new ListSequence<T>(*this);
+    for (size_t i = 0; i < list->GetLength(); ++i) {
+        result->Append(list->Get(i));
+    }
+    return result;
 }
 
 template<typename T>
 ListSequence<T>* ListSequence<T>::Map() {
-    size_t len = GetLength();
-    if (len == 0) {
-        return new ListSequence<T>();
-    }
-    T* newData = new T[len];
-    size_t i = 0;
-    for (auto& item : *this) {
-        newData[i++] = item + 1;
-    }
-    ListSequence<T>* result = new ListSequence<T>(newData, len);
-    delete[] newData;
-    return result;
+    throw std::runtime_error("Map requires a function parameter. Use Map(std::function<T(T)> func) instead.");
+    return this;
 }
 
 template<typename T>
 ListSequence<T>* ListSequence<T>::Where() {
-    size_t len = GetLength();
-    if (len == 0) {
-        return new ListSequence<T>();
-    }
-    size_t evenCount = 0;
-    for (auto& item : *this) {
-        if (item % 2 == 0) {
-            evenCount++;
-        }
-    }
-    T* evenData = new T[evenCount];
-    size_t i = 0;
-    for (auto& item : *this) {
-        if (item % 2 == 0) {
-            evenData[i++] = item;
-        }
-    }
-    ListSequence<T>* result = new ListSequence<T>(evenData, evenCount);
-    delete[] evenData;
-    return result;
+    throw std::runtime_error("Where requires a predicate parameter. Use Where(std::function<bool(T)> pred) instead.");
+    return this;
 }
 
 template<typename T>
 T ListSequence<T>::Reduce() {
-    size_t len = GetLength();
-    if (len == 0) {
-        return T(0);
-    }
-    T sum = T(0);
-    for (auto& item : *this) {
-        sum = sum + item;
-    }
-    return sum;
+    throw std::runtime_error("Reduce requires a function parameter. Use Reduce(std::function<T(T,T)> func, T initial) instead.");
+    return T();
 }
 
 template<typename T>
 Option<T> ListSequence<T>::Find() {
-    for (auto& item : *this) {
-        if (item == 3) {
-            return Option<T>(item);
-        }
-    }
+    throw std::runtime_error("Find requires a predicate parameter. Use Find(std::function<bool(T)> pred) instead.");
     return Option<T>();
 }
 
@@ -172,9 +129,9 @@ ImmutableListSequence<T>* ImmutableListSequence<T>::Prepend(T item) {
 }
 
 template<typename T> 
-ImmutableListSequence<T>* ImmutableListSequence<T>::InsertAt(T item, size_t idx) {
+ImmutableListSequence<T>* ImmutableListSequence<T>::InsertAt(T item, size_t index) {
     auto* c = new ImmutableListSequence<T>(*this);
-    c->ListSequence<T>::InsertAt(item, idx);
+    c->ListSequence<T>::InsertAt(item, index);
     return c;
 }
 

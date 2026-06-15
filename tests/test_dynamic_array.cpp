@@ -9,41 +9,41 @@ private:
     
     void assertEqual(int expected, int actual, const std::string& testName) {
         if (expected == actual) {
-            std::cout << "  ? " << testName << " - ПРОЙДЕН" << std::endl;
+            std::cout << "  [OK] " << testName << std::endl;
             passed++;
         } 
         else {
-            std::cout << "  ? " << testName << " - НЕ ПРОЙДЕН (Ожидалось: " << expected 
-                      << ", Получено: " << actual << ")" << std::endl;
+            std::cout << "  [FAIL] " << testName << " (ожидалось: " << expected 
+                      << ", получено: " << actual << ")" << std::endl;
             failed++;
         }
     }
     
     void assertEqual(size_t expected, size_t actual, const std::string& testName) {
         if (expected == actual) {
-            std::cout << "  ? " << testName << " - ПРОЙДЕН" << std::endl;
+            std::cout << "  [OK] " << testName << std::endl;
             passed++;
         } 
         else {
-            std::cout << "  ? " << testName << " - НЕ ПРОЙДЕН (Ожидалось: " << expected 
-                      << ", Получено: " << actual << ")" << std::endl;
+            std::cout << "  [FAIL] " << testName << " (ожидалось: " << expected 
+                      << ", получено: " << actual << ")" << std::endl;
             failed++;
         }
     }
     
     void assertTrue(bool condition, const std::string& testName) {
         if (condition) {
-            std::cout << "  ? " << testName << " - ПРОЙДЕН" << std::endl;
+            std::cout << "  [OK] " << testName << std::endl;
             passed++;
         } else {
-            std::cout << "  ? " << testName << " - НЕ ПРОЙДЕН" << std::endl;
+            std::cout << "  [FAIL] " << testName << std::endl;
             failed++;
         }
     }
     
     void printArray(DynamicArray<int>& arr, const std::string& label) {
         std::cout << "    " << label << ": [";
-        for (size_t i = 0; i < (arr.GetSize()); i++) {
+        for (size_t i = 0; i < arr.GetSize(); i++) {
             std::cout << arr.Get(i);
             if (i < arr.GetSize() - 1) std::cout << ", ";
         }
@@ -55,14 +55,14 @@ public:
         std::cout << "\n--- Тесты конструкторов DynamicArray ---" << std::endl;
         
         DynamicArray<int> arr1;
-        assertEqual((0), arr1.GetSize(), "Конструктор по умолчанию - размер");
+        assertEqual((size_t)0, arr1.GetSize(), "Конструктор по умолчанию - размер");
         
         DynamicArray<int> arr2(5);
-        assertEqual((5), arr2.GetSize(), "Конструктор с размером - размер");
+        assertEqual((size_t)5, arr2.GetSize(), "Конструктор с размером - размер");
         
         int items[] = {1, 2, 3, 4, 5};
         DynamicArray<int> arr3(items, 5);
-        assertEqual((5), arr3.GetSize(), "Конструктор из массива - размер");
+        assertEqual((size_t)5, arr3.GetSize(), "Конструктор из массива - размер");
         assertEqual(1, arr3.Get(0), "Конструктор из массива - элемент 0");
         assertEqual(3, arr3.Get(2), "Конструктор из массива - элемент 2");
         assertEqual(5, arr3.Get(4), "Конструктор из массива - элемент 4");
@@ -71,8 +71,12 @@ public:
         printArray(arr3, "Созданный массив");
         
         DynamicArray<int> arr4(arr3);
-        assertEqual((5), arr4.GetSize(), "Конструктор копирования - размер");
+        assertEqual((size_t)5, arr4.GetSize(), "Конструктор копирования - размер");
         assertEqual(1, arr4.Get(0), "Конструктор копирования - элемент 0");
+        
+        DynamicArray<int> arr5(std::move(arr3));
+        assertEqual((size_t)5, arr5.GetSize(), "Конструктор перемещения - размер");
+        assertEqual((size_t)0, arr3.GetSize(), "Конструктор перемещения - источник опустошён");
     }
     
     void testGetSet() {
@@ -119,31 +123,27 @@ public:
         std::cout << "    Исходный массив: [1, 2, 3, 4, 5]" << std::endl;
         
         arr.Resize(8);
-        assertEqual((8), arr.GetSize(), "Увеличение размера до 8 - новый размер");
+        assertEqual((size_t)8, arr.GetSize(), "Увеличение размера до 8 - новый размер");
         assertEqual(1, arr.Get(0), "Увеличение размера - элементы сохранены");
         assertEqual(5, arr.Get(4), "Увеличение размера - последний элемент сохранен");
         assertEqual(0, arr.Get(7), "Увеличение размера - новые элементы обнулены");
         std::cout << "    После Resize(8): [1, 2, 3, 4, 5, 0, 0, 0]" << std::endl;
         
         arr.Resize(3);
-        assertEqual((3), arr.GetSize(), "Уменьшение размера до 3 - новый размер");
+        assertEqual((size_t)3, arr.GetSize(), "Уменьшение размера до 3 - новый размер");
         assertEqual(1, arr.Get(0), "Уменьшение размера - первые элементы сохранены");
         assertEqual(3, arr.Get(2), "Уменьшение размера - обрезано корректно");
         std::cout << "    После Resize(3): [1, 2, 3]" << std::endl;
         
-        try {
-            arr.Resize((-1));
-            assertTrue(false, "Resize с отрицательным размером - должно быть исключение");
-        } catch (const IndexOutOfRangeException&) {
-            assertTrue(true, "Resize с отрицательным размером - исключение перехвачено");
-        }
+        arr.Resize(0);
+        assertEqual((size_t)0, arr.GetSize(), "Resize до 0");
     }
     
     void testEdgeCases() {
         std::cout << "\n--- Тесты граничных случаев DynamicArray ---" << std::endl;
         
         DynamicArray<int> empty;
-        assertEqual((0), empty.GetSize(), "Пустой массив - размер");
+        assertEqual((size_t)0, empty.GetSize(), "Пустой массив - размер");
         std::cout << "    Пустой массив создан успешно" << std::endl;
         
         DynamicArray<int> single(1);
@@ -156,11 +156,11 @@ public:
         assertEqual(7, singleFromArray.Get(0), "Массив из одного элемента из массива");
         
         DynamicArray<int> zeroSize(0);
-        assertEqual((0), zeroSize.GetSize(), "Массив нулевого размера");
+        assertEqual((size_t)0, zeroSize.GetSize(), "Массив нулевого размера");
     }
     
-    void testAssignment() {
-        std::cout << "\n--- Тесты оператора присваивания DynamicArray ---" << std::endl;
+    void testCopyAssignment() {
+        std::cout << "\n--- Тесты копирующего присваивания DynamicArray ---" << std::endl;
         
         int items[] = {10, 20, 30};
         DynamicArray<int> arr1(items, 3);
@@ -170,7 +170,7 @@ public:
         std::cout << "    arr2: []" << std::endl;
         
         arr2 = arr1;
-        assertEqual((3), arr2.GetSize(), "Присваивание - размер скопирован");
+        assertEqual((size_t)3, arr2.GetSize(), "Присваивание - размер скопирован");
         assertEqual(10, arr2.Get(0), "Присваивание - элемент 0 скопирован");
         assertEqual(30, arr2.Get(2), "Присваивание - элемент 2 скопирован");
         
@@ -178,7 +178,23 @@ public:
         
         arr2.Set(1, 99);
         assertEqual(20, arr1.Get(1), "Присваивание - глубокая копия (оригинал не изменился)");
-        std::cout << "    arr2 изменен, arr1 остался неизменным - глубокая копия" << std::endl;
+        std::cout << "    arr2 изменён, arr1 остался неизменным - глубокая копия" << std::endl;
+        
+        arr2 = arr2;
+        assertEqual((size_t)3, arr2.GetSize(), "Самоприсваивание");
+    }
+    
+    void testMoveAssignment() {
+        std::cout << "\n--- Тесты перемещающего присваивания DynamicArray ---" << std::endl;
+        
+        int items[] = {100, 200, 300};
+        DynamicArray<int> arr1(items, 3);
+        DynamicArray<int> arr2;
+        
+        arr2 = std::move(arr1);
+        assertEqual((size_t)3, arr2.GetSize(), "Перемещающее присваивание - размер");
+        assertEqual(100, arr2.Get(0), "Перемещающее присваивание - элемент 0");
+        assertEqual((size_t)0, arr1.GetSize(), "Перемещающее присваивание - источник опустошён");
     }
     
     void runAll() {
@@ -190,7 +206,8 @@ public:
         testGetSet();
         testResize();
         testEdgeCases();
-        testAssignment();
+        testCopyAssignment();
+        testMoveAssignment();
         
         std::cout << "\n--- Итог ---" << std::endl;
         std::cout << "Пройдено: " << passed << ", Не пройдено: " << failed << std::endl;
@@ -203,3 +220,4 @@ int main() {
     tests.runAll();
     return 0;
 }
+

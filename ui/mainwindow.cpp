@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     setupUI();
     currentArraySeq = new ArraySequence<int>();
     currentListSeq = new ListSequence<int>();
-    currentBitSeq = new BitSequence((0));
+    currentBitSeq = new BitSequence(0);
     currentLinkedList = new LinkedList<int>();
     displayArraySequence();
     displayListSequence();
@@ -87,7 +87,7 @@ void MainWindow::displayArraySequence()
 {
     if (arrayDisplay && currentArraySeq) {
         QString text = "[";
-        for (size_t i = 0; i < (currentArraySeq->GetLength()); i++) {
+        for (size_t i = 0; i < currentArraySeq->GetLength(); i++) {
             text += QString::number(currentArraySeq->Get(i));
             if (i < currentArraySeq->GetLength() - 1) text += ", ";
         }
@@ -100,7 +100,7 @@ void MainWindow::displayListSequence()
 {
     if (listDisplay && currentListSeq) {
         QString text = "[";
-        for (size_t i = 0; i < (currentListSeq->GetLength()); i++) {
+        for (size_t i = 0; i < currentListSeq->GetLength(); i++) {
             text += QString::number(currentListSeq->Get(i));
             if (i < currentListSeq->GetLength() - 1) text += ", ";
         }
@@ -113,7 +113,7 @@ void MainWindow::displayBitSequence()
 {
     if (bitDisplay && currentBitSeq) {
         QString text = "";
-        for (size_t i = 0; i < (currentBitSeq->GetLength()); i++) {
+        for (size_t i = 0; i < currentBitSeq->GetLength(); i++) {
             text += QString::number(currentBitSeq->GetBit(i));
             if ((i + 1) % 8 == 0 && i < currentBitSeq->GetLength() - 1) text += " ";
         }
@@ -126,7 +126,7 @@ void MainWindow::displayLinkedList()
 {
     if (linkedDisplay && currentLinkedList) {
         QString text = "[";
-        for (size_t i = 0; i < (currentLinkedList->GetLength()); i++) {
+        for (size_t i = 0; i < currentLinkedList->GetLength(); i++) {
             text += QString::number(currentLinkedList->Get(i));
             if (i < currentLinkedList->GetLength() - 1) text += ", ";
         }

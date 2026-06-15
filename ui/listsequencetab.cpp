@@ -13,6 +13,7 @@ QWidget* MainWindow::createListSequenceTab()
 {
     QWidget* tab = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(tab);
+    
     QGroupBox* viewGroup = new QGroupBox("Текущий ListSequence");
     QVBoxLayout* viewLayout = new QVBoxLayout(viewGroup);
     listDisplay = new QTextEdit();
@@ -20,8 +21,10 @@ QWidget* MainWindow::createListSequenceTab()
     listDisplay->setMaximumHeight(100);
     viewLayout->addWidget(listDisplay);
     layout->addWidget(viewGroup);
+    
     QGroupBox* opsGroup = new QGroupBox("Операции");
     QGridLayout* opsLayout = new QGridLayout(opsGroup);
+    
     QLineEdit* valueInput = new QLineEdit();
     valueInput->setPlaceholderText("Значение");
     QLineEdit* indexInput = new QLineEdit();
@@ -30,6 +33,7 @@ QWidget* MainWindow::createListSequenceTab()
     startInput->setPlaceholderText("Начало");
     QLineEdit* endInput = new QLineEdit();
     endInput->setPlaceholderText("Конец");
+    
     QPushButton* appendBtn = new QPushButton("Append");
     QPushButton* prependBtn = new QPushButton("Prepend");
     QPushButton* insertBtn = new QPushButton("InsertAt");
@@ -43,6 +47,7 @@ QWidget* MainWindow::createListSequenceTab()
     QPushButton* removeAtBtn = new QPushButton("RemoveAt");
     QPushButton* removeFirstBtn = new QPushButton("RemoveFirst");
     QPushButton* removeLastBtn = new QPushButton("RemoveLast");
+    
     opsLayout->addWidget(valueInput, 0, 0);
     opsLayout->addWidget(appendBtn, 0, 1);
     opsLayout->addWidget(prependBtn, 0, 2);
@@ -60,8 +65,10 @@ QWidget* MainWindow::createListSequenceTab()
     opsLayout->addWidget(whereBtn, 4, 0);
     opsLayout->addWidget(reduceBtn, 4, 1);
     opsLayout->addWidget(findBtn, 5, 0, 1, 3);
+    
     layout->addWidget(opsGroup);
     layout->addStretch();
+    
     connect(appendBtn, &QPushButton::clicked, [this, valueInput]() {
         if (!valueInput->text().isEmpty()) {
             currentListSeq->Append(valueInput->text().toInt());
@@ -70,6 +77,7 @@ QWidget* MainWindow::createListSequenceTab()
             valueInput->clear();
         }
     });
+    
     connect(prependBtn, &QPushButton::clicked, [this, valueInput]() {
         if (!valueInput->text().isEmpty()) {
             currentListSeq->Prepend(valueInput->text().toInt());
@@ -78,113 +86,168 @@ QWidget* MainWindow::createListSequenceTab()
             valueInput->clear();
         }
     });
+    
     connect(insertBtn, &QPushButton::clicked, [this, valueInput, indexInput]() {
         if (!valueInput->text().isEmpty() && !indexInput->text().isEmpty()) {
             try {
-                currentListSeq->InsertAt(valueInput->text().toInt(), (indexInput->text().toInt()));
+                currentListSeq->InsertAt(valueInput->text().toInt(), indexInput->text().toInt());
                 displayListSequence();
                 updateOutput("List InsertAt(" + valueInput->text() + ", " + indexInput->text() + ")");
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
-            valueInput->clear(); indexInput->clear();
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
+            valueInput->clear();
+            indexInput->clear();
         }
     });
+    
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int val = currentListSeq->Get((indexInput->text().toInt()));
+                int val = currentListSeq->Get(indexInput->text().toInt());
                 updateOutput("List Get(" + indexInput->text() + ") = " + QString::number(val));
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
             indexInput->clear();
         }
     });
+    
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                size_t index = (indexInput->text().toInt());
+                size_t index = indexInput->text().toInt();
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (size_t i = 0; i < (currentListSeq->GetLength()); i++) {
+                for (size_t i = 0; i < currentListSeq->GetLength(); i++) {
                     if (i != index) newSeq->Append(currentListSeq->Get(i));
                 }
-                delete currentListSeq; currentListSeq = newSeq;
+                delete currentListSeq;
+                currentListSeq = newSeq;
                 displayListSequence();
                 updateOutput("List RemoveAt(" + QString::number(index) + ")");
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
             indexInput->clear();
         }
     });
+    
     connect(removeFirstBtn, &QPushButton::clicked, [this]() {
         if (currentListSeq->GetLength() > 0) {
             try {
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (size_t i = 1; i < (currentListSeq->GetLength()); i++) newSeq->Append(currentListSeq->Get(i));
-                delete currentListSeq; currentListSeq = newSeq;
-                displayListSequence(); updateOutput("List RemoveFirst()");
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
-        } else { updateOutput("List RemoveFirst: последовательность пуста"); }
+                for (size_t i = 1; i < currentListSeq->GetLength(); i++) {
+                    newSeq->Append(currentListSeq->Get(i));
+                }
+                delete currentListSeq;
+                currentListSeq = newSeq;
+                displayListSequence();
+                updateOutput("List RemoveFirst()");
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
+        } else {
+            updateOutput("List RemoveFirst: последовательность пуста");
+        }
     });
+    
     connect(removeLastBtn, &QPushButton::clicked, [this]() {
         if (currentListSeq->GetLength() > 0) {
             try {
                 ListSequence<int>* newSeq = new ListSequence<int>();
-                for (size_t i = 0; i < (currentListSeq->GetLength()) - 1; i++) newSeq->Append(currentListSeq->Get(i));
-                delete currentListSeq; currentListSeq = newSeq;
-                displayListSequence(); updateOutput("List RemoveLast()");
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
-        } else { updateOutput("List RemoveLast: последовательность пуста"); }
+                for (size_t i = 0; i < currentListSeq->GetLength() - 1; i++) {
+                    newSeq->Append(currentListSeq->Get(i));
+                }
+                delete currentListSeq;
+                currentListSeq = newSeq;
+                displayListSequence();
+                updateOutput("List RemoveLast()");
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
+        } else {
+            updateOutput("List RemoveLast: последовательность пуста");
+        }
     });
+    
     connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* subseq = currentListSeq->GetSubsequence((startInput->text().toInt()), (endInput->text().toInt()));
+                auto* subseq = currentListSeq->GetSubsequence(startInput->text().toInt(), endInput->text().toInt());
                 QString result = "List подпоследовательность [";
-                for (size_t i = 0; i < (subseq->GetLength()); i++) {
+                for (size_t i = 0; i < subseq->GetLength(); i++) {
                     result += QString::number(subseq->Get(i));
                     if (i < subseq->GetLength() - 1) result += ", ";
                 }
-                result += "]"; updateOutput(result); delete subseq;
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
-            startInput->clear(); endInput->clear();
+                result += "]";
+                updateOutput(result);
+                delete subseq;
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
+            startInput->clear();
+            endInput->clear();
         }
     });
+    
     connect(concatBtn, &QPushButton::clicked, [this]() {
         auto* copy = new ListSequence<int>();
-        for (size_t i = 0; i < (currentListSeq->GetLength()); i++) copy->Append(currentListSeq->Get(i));
+        for (size_t i = 0; i < currentListSeq->GetLength(); i++) copy->Append(currentListSeq->Get(i));
         auto* result = currentListSeq->Concat(copy);
         updateOutput("List Concat: создана новая последовательность");
-        delete copy; delete result;
+        delete copy;
+        delete result;
     });
+    
     connect(mapBtn, &QPushButton::clicked, [this]() {
         if (currentListSeq->GetLength() > 0) {
             auto* result = currentListSeq->Map();
             QString res = "List Map (+1): [";
-            for (size_t i = 0; i < (result->GetLength()); i++) {
+            for (size_t i = 0; i < result->GetLength(); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
-            res += "]"; updateOutput(res); delete result;
-        } else { updateOutput("List Map: последовательность пуста"); }
+            res += "]";
+            updateOutput(res);
+            delete result;
+        } else {
+            updateOutput("List Map: последовательность пуста");
+        }
     });
+    
     connect(whereBtn, &QPushButton::clicked, [this]() {
         if (currentListSeq->GetLength() > 0) {
             auto* result = currentListSeq->Where();
             QString res = "List Where (чётные числа): [";
-            for (size_t i = 0; i < (result->GetLength()); i++) {
+            for (size_t i = 0; i < result->GetLength(); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
-            res += "]"; updateOutput(res); delete result;
-        } else { updateOutput("List Where: последовательность пуста"); }
+            res += "]";
+            updateOutput(res);
+            delete result;
+        } else {
+            updateOutput("List Where: последовательность пуста");
+        }
     });
+    
     connect(reduceBtn, &QPushButton::clicked, [this]() {
         if (currentListSeq->GetLength() > 0) {
             int result = currentListSeq->Reduce();
             updateOutput("List Reduce (сумма) = " + QString::number(result));
-        } else { updateOutput("List Reduce: последовательность пуста, сумма = 0"); }
+        } else {
+            updateOutput("List Reduce: последовательность пуста, сумма = 0");
+        }
     });
+    
     connect(findBtn, &QPushButton::clicked, [this]() {
         Option<int> found = currentListSeq->Find();
-        if (found.IsSome()) updateOutput("List Find(значение == 3): найдено значение " + QString::number(found.GetValue()));
-        else updateOutput("List Find(значение == 3): значение не найдено");
+        if (found.IsSome()) {
+            updateOutput("List Find(значение == 3): найдено значение " + QString::number(found.GetValue()));
+        } else {
+            updateOutput("List Find(значение == 3): значение не найдено");
+        }
     });
+    
     return tab;
 }

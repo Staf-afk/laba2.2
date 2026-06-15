@@ -13,6 +13,7 @@ QWidget* MainWindow::createArraySequenceTab()
 {
     QWidget* tab = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(tab);
+    
     QGroupBox* viewGroup = new QGroupBox("Текущий ArraySequence");
     QVBoxLayout* viewLayout = new QVBoxLayout(viewGroup);
     arrayDisplay = new QTextEdit();
@@ -20,8 +21,10 @@ QWidget* MainWindow::createArraySequenceTab()
     arrayDisplay->setMaximumHeight(100);
     viewLayout->addWidget(arrayDisplay);
     layout->addWidget(viewGroup);
+    
     QGroupBox* opsGroup = new QGroupBox("Операции");
     QGridLayout* opsLayout = new QGridLayout(opsGroup);
+    
     QLineEdit* valueInput = new QLineEdit();
     valueInput->setPlaceholderText("Значение");
     QLineEdit* indexInput = new QLineEdit();
@@ -30,6 +33,7 @@ QWidget* MainWindow::createArraySequenceTab()
     startInput->setPlaceholderText("Начало");
     QLineEdit* endInput = new QLineEdit();
     endInput->setPlaceholderText("Конец");
+    
     QPushButton* appendBtn = new QPushButton("Append");
     QPushButton* prependBtn = new QPushButton("Prepend");
     QPushButton* insertBtn = new QPushButton("InsertAt");
@@ -43,6 +47,7 @@ QWidget* MainWindow::createArraySequenceTab()
     QPushButton* removeAtBtn = new QPushButton("RemoveAt");
     QPushButton* removeFirstBtn = new QPushButton("RemoveFirst");
     QPushButton* removeLastBtn = new QPushButton("RemoveLast");
+    
     opsLayout->addWidget(valueInput, 0, 0);
     opsLayout->addWidget(appendBtn, 0, 1);
     opsLayout->addWidget(prependBtn, 0, 2);
@@ -60,8 +65,10 @@ QWidget* MainWindow::createArraySequenceTab()
     opsLayout->addWidget(whereBtn, 4, 0);
     opsLayout->addWidget(reduceBtn, 4, 1);
     opsLayout->addWidget(findBtn, 5, 0, 1, 3);
+    
     layout->addWidget(opsGroup);
     layout->addStretch();
+    
     connect(appendBtn, &QPushButton::clicked, [this, valueInput]() {
         if (!valueInput->text().isEmpty()) {
             currentArraySeq->Append(valueInput->text().toInt());
@@ -70,6 +77,7 @@ QWidget* MainWindow::createArraySequenceTab()
             valueInput->clear();
         }
     });
+    
     connect(prependBtn, &QPushButton::clicked, [this, valueInput]() {
         if (!valueInput->text().isEmpty()) {
             currentArraySeq->Prepend(valueInput->text().toInt());
@@ -78,10 +86,11 @@ QWidget* MainWindow::createArraySequenceTab()
             valueInput->clear();
         }
     });
+    
     connect(insertBtn, &QPushButton::clicked, [this, valueInput, indexInput]() {
         if (!valueInput->text().isEmpty() && !indexInput->text().isEmpty()) {
             try {
-                currentArraySeq->InsertAt(valueInput->text().toInt(), (indexInput->text().toInt()));
+                currentArraySeq->InsertAt(valueInput->text().toInt(), indexInput->text().toInt());
                 displayArraySequence();
                 updateOutput("InsertAt(" + valueInput->text() + ", " + indexInput->text() + ")");
             } catch (const std::exception& e) {
@@ -91,10 +100,11 @@ QWidget* MainWindow::createArraySequenceTab()
             indexInput->clear();
         }
     });
+    
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                int val = currentArraySeq->Get((indexInput->text().toInt()));
+                int val = currentArraySeq->Get(indexInput->text().toInt());
                 updateOutput("Get(" + indexInput->text() + ") = " + QString::number(val));
             } catch (const std::exception& e) {
                 updateOutput("Ошибка: " + QString(e.what()));
@@ -102,12 +112,13 @@ QWidget* MainWindow::createArraySequenceTab()
             indexInput->clear();
         }
     });
+    
     connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                size_t index = (indexInput->text().toInt());
+                size_t index = indexInput->text().toInt();
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (size_t i = 0; i < (currentArraySeq->GetLength()); i++) {
+                for (size_t i = 0; i < currentArraySeq->GetLength(); i++) {
                     if (i != index) newSeq->Append(currentArraySeq->Get(i));
                 }
                 delete currentArraySeq;
@@ -120,11 +131,12 @@ QWidget* MainWindow::createArraySequenceTab()
             indexInput->clear();
         }
     });
+    
     connect(removeFirstBtn, &QPushButton::clicked, [this]() {
         if (currentArraySeq->GetLength() > 0) {
             try {
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (size_t i = 1; i < (currentArraySeq->GetLength()); i++) {
+                for (size_t i = 1; i < currentArraySeq->GetLength(); i++) {
                     newSeq->Append(currentArraySeq->Get(i));
                 }
                 delete currentArraySeq;
@@ -138,11 +150,12 @@ QWidget* MainWindow::createArraySequenceTab()
             updateOutput("RemoveFirst: последовательность пуста");
         }
     });
+    
     connect(removeLastBtn, &QPushButton::clicked, [this]() {
         if (currentArraySeq->GetLength() > 0) {
             try {
                 ArraySequence<int>* newSeq = new ArraySequence<int>();
-                for (size_t i = 0; i < (currentArraySeq->GetLength()) - 1; i++) {
+                for (size_t i = 0; i < currentArraySeq->GetLength() - 1; i++) {
                     newSeq->Append(currentArraySeq->Get(i));
                 }
                 delete currentArraySeq;
@@ -156,12 +169,13 @@ QWidget* MainWindow::createArraySequenceTab()
             updateOutput("RemoveLast: последовательность пуста");
         }
     });
+    
     connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* subseq = currentArraySeq->GetSubsequence((startInput->text().toInt()), (endInput->text().toInt()));
+                auto* subseq = currentArraySeq->GetSubsequence(startInput->text().toInt(), endInput->text().toInt());
                 QString result = "Подпоследовательность [";
-                for (size_t i = 0; i < (subseq->GetLength()); i++) {
+                for (size_t i = 0; i < subseq->GetLength(); i++) {
                     result += QString::number(subseq->Get(i));
                     if (i < subseq->GetLength() - 1) result += ", ";
                 }
@@ -175,45 +189,66 @@ QWidget* MainWindow::createArraySequenceTab()
             endInput->clear();
         }
     });
+    
     connect(concatBtn, &QPushButton::clicked, [this]() {
         auto* copy = new ArraySequence<int>();
-        for (size_t i = 0; i < (currentArraySeq->GetLength()); i++) copy->Append(currentArraySeq->Get(i));
+        for (size_t i = 0; i < currentArraySeq->GetLength(); i++) copy->Append(currentArraySeq->Get(i));
         auto* result = currentArraySeq->Concat(copy);
         updateOutput("Concat: создана новая последовательность с дубликатом");
-        delete copy; delete result;
+        delete copy;
+        delete result;
     });
+    
     connect(mapBtn, &QPushButton::clicked, [this]() {
         if (currentArraySeq->GetLength() > 0) {
             auto* result = currentArraySeq->Map();
             QString res = "Map (+1): [";
-            for (size_t i = 0; i < (result->GetLength()); i++) {
+            for (size_t i = 0; i < result->GetLength(); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
-            res += "]"; updateOutput(res); delete result;
-        } else { updateOutput("Map: последовательность пуста"); }
+            res += "]";
+            updateOutput(res);
+            delete result;
+        } else {
+            updateOutput("Map: последовательность пуста");
+        }
     });
+    
     connect(whereBtn, &QPushButton::clicked, [this]() {
         if (currentArraySeq->GetLength() > 0) {
             auto* result = currentArraySeq->Where();
             QString res = "Where (чётные числа): [";
-            for (size_t i = 0; i < (result->GetLength()); i++) {
+            for (size_t i = 0; i < result->GetLength(); i++) {
                 res += QString::number(result->Get(i));
                 if (i < result->GetLength() - 1) res += ", ";
             }
-            res += "]"; updateOutput(res); delete result;
-        } else { updateOutput("Where: последовательность пуста"); }
+            res += "]";
+            updateOutput(res);
+            delete result;
+        } else {
+            updateOutput("Where: последовательность пуста");
+        }
     });
+    
     connect(reduceBtn, &QPushButton::clicked, [this]() {
         if (currentArraySeq->GetLength() > 0) {
             int result = currentArraySeq->Reduce();
             updateOutput("Reduce (сумма) = " + QString::number(result));
-        } else { updateOutput("Reduce: последовательность пуста, сумма = 0"); }
+        } else {
+            updateOutput("Reduce: последовательность пуста, сумма = 0");
+        }
     });
+    
     connect(findBtn, &QPushButton::clicked, [this]() {
         Option<int> found = currentArraySeq->Find();
-        if (found.IsSome()) updateOutput("Find: найдено значение " + QString::number(found.GetValue()));
-        else updateOutput("Find: значение 3 не найдено");
+        if (found.IsSome()) {
+            updateOutput("Find: найдено значение " + QString::number(found.GetValue()));
+        } else {
+            updateOutput("Find: значение 3 не найдено");
+        }
     });
+    
     return tab;
 }
+
