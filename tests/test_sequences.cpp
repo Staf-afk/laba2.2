@@ -3,6 +3,10 @@
 #include "../include/arraySequence.hpp"
 #include "../include/listSequence.hpp"
 
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+
 class SequenceTests {
 private:
     int passed = 0;
@@ -11,10 +15,10 @@ private:
     template<typename T>
     void assertEqual(T expected, T actual, const std::string& testName) {
         if (expected == actual) {
-            std::cout << "  [OK] " << testName << std::endl;
+            std::cout << GREEN << "  [OK] " << RESET << testName << std::endl;
             passed++;
         } else {
-            std::cout << "  [FAIL] " << testName << " (®¦¨¤ «®áì: " << expected 
+            std::cout << RED << "  [FAIL] " << RESET << testName << " (®¦¨¤ «®áì: " << expected 
                       << ", ¯®«ãç¥­®: " << actual << ")" << std::endl;
             failed++;
         }
@@ -22,10 +26,10 @@ private:
     
     void assertEqual(size_t expected, size_t actual, const std::string& testName) {
         if (expected == actual) {
-            std::cout << "  [OK] " << testName << std::endl;
+            std::cout << GREEN << "  [OK] " << RESET << testName << std::endl;
             passed++;
         } else {
-            std::cout << "  [FAIL] " << testName << " (®¦¨¤ «®áì: " << expected 
+            std::cout << RED << "  [FAIL] " << RESET << testName << " (®¦¨¤ «®áì: " << expected 
                       << ", ¯®«ãç¥­®: " << actual << ")" << std::endl;
             failed++;
         }
@@ -33,10 +37,10 @@ private:
     
     void assertTrue(bool condition, const std::string& testName) {
         if (condition) {
-            std::cout << "  [OK] " << testName << std::endl;
+            std::cout << GREEN << "  [OK] " << RESET << testName << std::endl;
             passed++;
         } else {
-            std::cout << "  [FAIL] " << testName << std::endl;
+            std::cout << RED << "  [FAIL] " << RESET << testName << std::endl;
             failed++;
         }
     }
