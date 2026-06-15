@@ -1,4 +1,4 @@
-#include "../include/dynamicArray.hpp"
+﻿#include "../include/dynamicArray.hpp"
 #include "../include/exceptions.cpp"
 
 template<typename T>
@@ -18,7 +18,7 @@ DynamicArray<T>::DynamicArray(DynamicArray<T>&& other)
 }
 
 template<typename T>
-DynamicArray<T>& DynamicArray<T>::operator=(DynamicArray<T>&& other)   {
+DynamicArray<T>& DynamicArray<T>::operator=(DynamicArray<T>&& other) {
     if (this != &other) {
         delete[] data;
         data = other.data;
@@ -31,7 +31,9 @@ DynamicArray<T>& DynamicArray<T>::operator=(DynamicArray<T>&& other)   {
 
 template<typename T> 
 DynamicArray<T>::DynamicArray(T* items, size_t count) : size(count) {
-    if (count > 0 && items == nullptr) throw NullPointerArgumentException("Items pointer cannot be null for positive count");
+    if (count > 0 && items == nullptr) {
+        throw NullPointerArgumentException("DynamicArray", "items");
+    }
     data = count > 0 ? new T[count] : nullptr;
     for (size_t i = 0; i < count; ++i) data[i] = items[i];
 }
@@ -49,13 +51,13 @@ DynamicArray<T>::~DynamicArray() {
 
 template<typename T> 
 T DynamicArray<T>::Get(size_t index) const {
-    if (index >= size) throw IndexOutOfRangeException();
+    if (index >= size) throw IndexOutOfRangeException("DynamicArray::Get", size, index);
     return data[index];
 }
 
 template<typename T> 
 void DynamicArray<T>::Set(size_t index, T value) {
-    if (index >= size) throw IndexOutOfRangeException();
+    if (index >= size) throw IndexOutOfRangeException("DynamicArray::Set", size, index);
     data[index] = value;
 }
 

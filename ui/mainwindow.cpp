@@ -117,7 +117,7 @@ void MainWindow::displayBitSequence()
             text += QString::number(currentBitSeq->GetBit(i));
             if ((i + 1) % 8 == 0 && i < currentBitSeq->GetLength() - 1) text += " ";
         }
-        text += " (длина: " + QString::number(currentBitSeq->GetLength()) + " бит)";
+        if (text.isEmpty()) text = "(пусто)";
         bitDisplay->setText(text);
     }
 }

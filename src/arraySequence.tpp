@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <stdexcept>
 #include "../include/exceptions.cpp"
@@ -10,7 +10,7 @@ ArraySequence<T>::ArraySequence() : items() {}
 template<typename T>
 ArraySequence<T>::ArraySequence(T* itemsArr, size_t count) {
     if (count > 0 && itemsArr == nullptr) 
-        throw NullPointerArgumentException("Items pointer cannot be null for positive count");
+        throw NullPointerArgumentException("ArraySequence", "itemsArr");
     items = DynamicArray<T>(itemsArr, count);
 }
 
@@ -53,13 +53,13 @@ ArraySequence<T>& ArraySequence<T>::operator=(ArraySequence<T>&& other) {
 
 template<typename T>
 T ArraySequence<T>::GetFirst() {
-    if (items.GetSize() == 0) throw EmptyCollectionException();
+    if (items.GetSize() == 0) throw EmptyCollectionException("GetFirst");
     return items.Get(0);
 }
 
 template<typename T>
 T ArraySequence<T>::GetLast() {
-    if (items.GetSize() == 0) throw EmptyCollectionException();
+    if (items.GetSize() == 0) throw EmptyCollectionException("GetLast");
     return items.Get(items.GetSize() - 1);
 }
 
@@ -76,9 +76,16 @@ size_t ArraySequence<T>::GetLength() {
 template<typename T>
 ArraySequence<T>* ArraySequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const {
     size_t size = items.GetSize();
-    if (startIndex > endIndex || startIndex >= size || endIndex >= size) {
-        throw IndexOutOfRangeException("Invalid subsequence range [" + std::to_string(startIndex) + ", " + std::to_string(endIndex) + "]");   
+    if (startIndex > endIndex) {
+        throw InvalidArgumentException("GetSubsequence", "начальный индекс больше конечного");
     }
+    if (startIndex >= size) {
+        throw IndexOutOfRangeException("GetSubsequence", size, startIndex);
+    }
+    if (endIndex >= size) {
+        throw IndexOutOfRangeException("GetSubsequence", size, endIndex);
+    }
+    
     size_t len = endIndex - startIndex + 1;
     T* newData = new T[len];
     
@@ -106,16 +113,20 @@ ArraySequence<T>* ArraySequence<T>::Prepend(T item) {
 template<typename T>
 ArraySequence<T>* ArraySequence<T>::InsertAt(T item, size_t index) {
     size_t size = items.GetSize();
-    if (index > size) throw IndexOutOfRangeException("Insert index out of bounds: " + std::to_string(index));
+    if (index > size) {
+        throw IndexOutOfRangeException("InsertAt", size, index);
+    }
     items.Resize(size + 1);
-    for (size_t i = size; i > index; --i) items.Set(i, items.Get(i - 1));
+    for (size_t i = size; i > index; --i) {
+        items.Set(i, items.Get(i - 1));
+    }
     items.Set(index, item);
     return this;
 }
 
 template<typename T>
 ArraySequence<T>* ArraySequence<T>::Concat(Sequence<T>* list) {
-    if (!list) throw NullPointerArgumentException("Cannot concatenate with null sequence");
+    if (!list) throw NullPointerArgumentException("Concat", "list");
     ArraySequence<T>* res = new ArraySequence<T>(*this);
     for (size_t i = 0; i < list->GetLength(); ++i) res->Append(list->Get(i));
     return res;
@@ -123,26 +134,22 @@ ArraySequence<T>* ArraySequence<T>::Concat(Sequence<T>* list) {
 
 template<typename T>
 ArraySequence<T>* ArraySequence<T>::Map() {
-    throw std::runtime_error("Map requires a function parameter. Use Map(std::function<T(T)> func) instead.");
-    return this;
+    throw std::runtime_error("Map требует параметр-функцию. Используйте Map(std::function<T(T)> func)");
 }
 
 template<typename T>
 ArraySequence<T>* ArraySequence<T>::Where() {
-    throw std::runtime_error("Where requires a predicate parameter. Use Where(std::function<bool(T)> pred) instead.");
-    return this;
+    throw std::runtime_error("Where требует параметр-предикат. Используйте Where(std::function<bool(T)> pred)");
 }
 
 template<typename T>
 T ArraySequence<T>::Reduce() {
-    throw std::runtime_error("Reduce requires a function parameter. Use Reduce(std::function<T(T,T)> func, T initial) instead.");
-    return T();
+    throw std::runtime_error("Reduce требует параметр-функцию. Используйте Reduce(std::function<T(T,T)> func, T initial)");
 }
 
 template<typename T>
 Option<T> ArraySequence<T>::Find() {
-    throw std::runtime_error("Find requires a predicate parameter. Use Find(std::function<bool(T)> pred) instead.");
-    return Option<T>();
+    throw std::runtime_error("Find требует параметр-предикат. Используйте Find(std::function<bool(T)> pred)");
 }
 
 template<typename T>
@@ -163,3 +170,4 @@ ImmutableArraySequence<T>* ImmutableArraySequence<T>::InsertAt(T item, size_t in
     c->ArraySequence<T>::InsertAt(item, index);
     return c;
 }
+

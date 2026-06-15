@@ -1,4 +1,4 @@
-#include "../include/listSequence.hpp"
+﻿#include "../include/listSequence.hpp"
 #include "../include/exceptions.cpp"
 
 template<typename T>
@@ -57,7 +57,12 @@ size_t ListSequence<T>::GetLength() {
 
 template<typename T> 
 ListSequence<T>* ListSequence<T>::GetSubsequence(size_t start, size_t end) const {
-    if (start > end || end >= items.GetLength()) throw IndexOutOfRangeException();
+    if (start > end) {
+        throw InvalidArgumentException("GetSubsequence", "начальный индекс больше конечного");
+    }
+    if (end >= items.GetLength()) {
+        throw IndexOutOfRangeException("GetSubsequence", items.GetLength(), end);
+    }
     LinkedList<T>* sublist = items.GetSubList(start, end);
     ListSequence<T>* result = new ListSequence<T>(*sublist);
     delete sublist;
@@ -84,7 +89,7 @@ ListSequence<T>* ListSequence<T>::InsertAt(T item, size_t index) {
 
 template<typename T> 
 ListSequence<T>* ListSequence<T>::Concat(Sequence<T>* list) {
-    if (!list) return new ListSequence<T>(*this);
+    if (!list) throw NullPointerArgumentException("Concat", "list");
     ListSequence<T>* result = new ListSequence<T>(*this);
     for (size_t i = 0; i < list->GetLength(); ++i) {
         result->Append(list->Get(i));
@@ -94,26 +99,22 @@ ListSequence<T>* ListSequence<T>::Concat(Sequence<T>* list) {
 
 template<typename T>
 ListSequence<T>* ListSequence<T>::Map() {
-    throw std::runtime_error("Map requires a function parameter. Use Map(std::function<T(T)> func) instead.");
-    return this;
+    throw std::runtime_error("Map требует параметр-функцию. Используйте Map(std::function<T(T)> func)");
 }
 
 template<typename T>
 ListSequence<T>* ListSequence<T>::Where() {
-    throw std::runtime_error("Where requires a predicate parameter. Use Where(std::function<bool(T)> pred) instead.");
-    return this;
+    throw std::runtime_error("Where требует параметр-предикат. Используйте Where(std::function<bool(T)> pred)");
 }
 
 template<typename T>
 T ListSequence<T>::Reduce() {
-    throw std::runtime_error("Reduce requires a function parameter. Use Reduce(std::function<T(T,T)> func, T initial) instead.");
-    return T();
+    throw std::runtime_error("Reduce требует параметр-функцию. Используйте Reduce(std::function<T(T,T)> func, T initial)");
 }
 
 template<typename T>
 Option<T> ListSequence<T>::Find() {
-    throw std::runtime_error("Find requires a predicate parameter. Use Find(std::function<bool(T)> pred) instead.");
-    return Option<T>();
+    throw std::runtime_error("Find требует параметр-предикат. Используйте Find(std::function<bool(T)> pred)");
 }
 
 template<typename T> 

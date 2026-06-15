@@ -38,7 +38,9 @@ BitSequence::~BitSequence() {
 }
 
 void BitSequence::SetBit(size_t index, bool value) {
-    if (index >= bitLength) throw IndexOutOfRangeException();
+    if (index >= bitLength) {
+        throw IndexOutOfRangeException("SetBit", bitLength, index);
+    }
     size_t byteIdx = index / 8;
     size_t bitIdx = index % 8;
     if (value) {
@@ -49,14 +51,18 @@ void BitSequence::SetBit(size_t index, bool value) {
 }
 
 bool BitSequence::GetBit(size_t index) const {
-    if (index >= bitLength) throw IndexOutOfRangeException();
+    if (index >= bitLength) {
+        throw IndexOutOfRangeException("GetBit", bitLength, index);
+    }
     size_t byteIdx = index / 8;
     size_t bitIdx = index % 8;
     return (data[byteIdx] & (1 << bitIdx)) != 0;
 }
 
 void BitSequence::RemoveBitAt(size_t index) {
-    if (index >= bitLength) throw IndexOutOfRangeException();
+    if (index >= bitLength) {
+        throw IndexOutOfRangeException("RemoveBitAt", bitLength, index);
+    }
     BitSequence newSeq(bitLength - 1);
     for (size_t i = 0; i < index; ++i) {
         newSeq.SetBit(i, GetBit(i));
@@ -68,12 +74,12 @@ void BitSequence::RemoveBitAt(size_t index) {
 }
 
 void BitSequence::RemoveFirstBit() {
-    if (bitLength == 0) throw EmptyCollectionException();
+    if (bitLength == 0) throw EmptyCollectionException("RemoveFirstBit");
     RemoveBitAt(0);
 }
 
 void BitSequence::RemoveLastBit() {
-    if (bitLength == 0) throw EmptyCollectionException();
+    if (bitLength == 0) throw EmptyCollectionException("RemoveLastBit");
     RemoveBitAt(bitLength - 1);
 }
 
@@ -95,12 +101,12 @@ void BitSequence::Clear() {
 }
 
 bool BitSequence::GetFirst() {
-    if (bitLength == 0) throw EmptyCollectionException();
+    if (bitLength == 0) throw EmptyCollectionException("GetFirst");
     return GetBit(0);
 }
 
 bool BitSequence::GetLast() {
-    if (bitLength == 0) throw EmptyCollectionException();
+    if (bitLength == 0) throw EmptyCollectionException("GetLast");
     return GetBit(bitLength - 1);
 }
 
@@ -113,7 +119,12 @@ size_t BitSequence::GetLength() {
 }
 
 Sequence<bool>* BitSequence::GetSubsequence(size_t startIndex, size_t endIndex) const {
-    if (startIndex > endIndex || endIndex >= bitLength) throw IndexOutOfRangeException();
+    if (startIndex > endIndex) {
+        throw InvalidArgumentException("GetSubsequence", "начальный индекс больше конечного");
+    }
+    if (endIndex >= bitLength) {
+        throw IndexOutOfRangeException("GetSubsequence", bitLength, endIndex);
+    }
     size_t newLen = endIndex - startIndex + 1;
     BitSequence* result = new BitSequence(newLen);
     for (size_t i = 0; i < newLen; ++i) {
@@ -142,7 +153,9 @@ Sequence<bool>* BitSequence::Prepend(bool item) {
 }
 
 Sequence<bool>* BitSequence::InsertAt(bool item, size_t index) {
-    if (index > bitLength) throw IndexOutOfRangeException();
+    if (index > bitLength) {
+        throw IndexOutOfRangeException("InsertAt", bitLength, index);
+    }
     BitSequence* newSeq = new BitSequence(bitLength + 1);
     for (size_t i = 0; i < index; ++i) {
         newSeq->SetBit(i, GetBit(i));
@@ -161,7 +174,7 @@ Sequence<bool>* BitSequence::InsertAt(bool item, size_t index) {
 }
 
 Sequence<bool>* BitSequence::Concat(Sequence<bool>* list) {
-    if (!list) throw NullPointerArgumentException();
+    if (!list) throw NullPointerArgumentException("Concat", "list");
     size_t otherLen = list->GetLength();
     BitSequence* newSeq = new BitSequence(bitLength + otherLen);
     for (size_t i = 0; i < bitLength; ++i) {
@@ -269,3 +282,4 @@ BitSequence& BitSequence::operator=(const BitSequence& other) {
     }
     return *this;
 }
+

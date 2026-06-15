@@ -10,7 +10,7 @@ private:
     
 public:
     BitSequence();
-    explicit BitSequence(size_t size);
+    BitSequence(size_t size);
     BitSequence(bool* bits, size_t count);
     BitSequence(const BitSequence& other);
     ~BitSequence();
@@ -21,7 +21,7 @@ public:
     bool GetFirst() override;
     bool GetLast() override;
     bool Get(size_t index) override;
-    Sequence<bool>* GetSubsequence(size_t startIndex, size_t endIndex) const override;  // const!!!
+    Sequence<bool>* GetSubsequence(size_t startIndex, size_t endIndex) const override; 
     size_t GetLength() override;
     
     Sequence<bool>* Append(bool item) override;
@@ -48,3 +48,4 @@ public:
     void Resize(size_t newSize);
     void Clear();
 };
+

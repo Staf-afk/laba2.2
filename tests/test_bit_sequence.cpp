@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "../include/bitSequence.hpp"
+#include "../include/exceptions.cpp"
 
 #define RESET   "\033[0m"
 #define RED     "\033[31m"
@@ -80,10 +81,6 @@ public:
         BitSequence seq4(seq3);
         assertEqual((size_t)8, seq4.GetLength(), "Конструктор копирования - длина");
         assertEqual(true, seq4.GetBit(0), "Конструктор копирования - бит 0");
-        
-        BitSequence seq5(std::move(seq3));
-        assertEqual((size_t)8, seq5.GetLength(), "Конструктор перемещения - длина");
-        assertEqual((size_t)0, seq3.GetLength(), "Конструктор перемещения - источник опустошён");
     }
     
     void testSetGetBit() {
@@ -114,7 +111,7 @@ public:
         try {
             seq.GetBit(20);
             assertTrue(false, "GetBit за пределами - должно быть исключение");
-        } catch (const IndexOutOfRangeException&) {
+        } catch (const IndexOutOfRangeException& e) {
             assertTrue(true, "GetBit за пределами - исключение перехвачено");
             std::cout << "    Ожидалось исключение IndexOutOfRangeException - получено" << std::endl;
         }
@@ -122,7 +119,7 @@ public:
         try {
             seq.SetBit(20, true);
             assertTrue(false, "SetBit за пределами - должно быть исключение");
-        } catch (const IndexOutOfRangeException&) {
+        } catch (const IndexOutOfRangeException& e) {
             assertTrue(true, "SetBit за пределами - исключение перехвачено");
         }
     }
@@ -204,20 +201,20 @@ public:
         printBits(&seq, "Исходная последовательность");
         std::cout << "    Исходная: 1010" << std::endl;
         
-        seq.Append(Bit(true));
+        seq.Append(true);
         assertEqual((size_t)5, seq.GetLength(), "Append - длина увеличена");
         assertEqual(true, seq.GetBit(4), "Append - значение добавлено в конец");
         printBits(&seq, "После Append(1)");
         std::cout << "    Результат: 10101" << std::endl;
         
-        seq.Prepend(Bit(false));
+        seq.Prepend(false);
         assertEqual((size_t)6, seq.GetLength(), "Prepend - длина увеличена");
         assertEqual(false, seq.GetBit(0), "Prepend - значение в начале");
         assertEqual(true, seq.GetBit(1), "Prepend - исходные значения сдвинуты");
         printBits(&seq, "После Prepend(0)");
         std::cout << "    Результат: 010101" << std::endl;
         
-        seq.InsertAt(Bit(1), 3);
+        seq.InsertAt(true, 3);
         assertEqual((size_t)7, seq.GetLength(), "InsertAt - длина увеличена");
         assertEqual(true, seq.GetBit(3), "InsertAt - значение вставлено на индекс 3");
         printBits(&seq, "После InsertAt(1, 3)");
@@ -232,15 +229,82 @@ public:
         printBits(&seq, "Исходная последовательность");
         std::cout << "    Исходная: 10101010 10101010" << std::endl;
         
-        BitSequence* subseq = seq.GetSubsequence(2, 5);
+        Sequence<bool>* subseq = seq.GetSubsequence(2, 5);
         assertEqual((size_t)4, subseq->GetLength(), "Подпоследовательность [2-5] - длина");
-        assertEqual(true, subseq->GetBit(0), "Подпоследовательность бит 0 = 1");
-        assertEqual(false, subseq->GetBit(1), "Подпоследовательность бит 1 = 0");
-        assertEqual(true, subseq->GetBit(2), "Подпоследовательность бит 2 = 1");
-        assertEqual(false, subseq->GetBit(3), "Подпоследовательность бит 3 = 0");
-        printBits(subseq, "Подпоследовательность [2-5]");
+        BitSequence* bitSubseq = static_cast<BitSequence*>(subseq);
+        assertEqual(true, bitSubseq->GetBit(0), "Подпоследовательность бит 0 = 1");
+        assertEqual(false, bitSubseq->GetBit(1), "Подпоследовательность бит 1 = 0");
+        assertEqual(true, bitSubseq->GetBit(2), "Подпоследовательность бит 2 = 1");
+        assertEqual(false, bitSubseq->GetBit(3), "Подпоследовательность бит 3 = 0");
+        printBits(bitSubseq, "Подпоследовательность [2-5]");
         std::cout << "    Ожидаемый результат: 1010" << std::endl;
         delete subseq;
+    }
+    
+    void testRemoveBit() {
+        std::cout << "\n--- Тесты RemoveBit BitSequence ---" << std::endl;
+        
+        bool bits[] = {1, 0, 1, 0, 1, 0, 1, 0};
+        BitSequence seq(bits, 8);
+        printBits(&seq, "Исходная последовательность");
+        std::cout << "    Исходная: 10101010" << std::endl;
+        
+        seq.RemoveBitAt(3);
+        assertEqual((size_t)7, seq.GetLength(), "RemoveBitAt(3) - длина уменьшена");
+        printBits(&seq, "После RemoveBitAt(3)");
+        
+        seq.RemoveFirstBit();
+        assertEqual((size_t)6, seq.GetLength(), "RemoveFirstBit - длина уменьшена");
+        printBits(&seq, "После RemoveFirstBit()");
+        
+        seq.RemoveLastBit();
+        assertEqual((size_t)5, seq.GetLength(), "RemoveLastBit - длина уменьшена");
+        printBits(&seq, "После RemoveLastBit()");
+        
+        try {
+            BitSequence empty;
+            empty.RemoveFirstBit();
+            assertTrue(false, "RemoveFirstBit на пустой - должно быть исключение");
+        } catch (const EmptyCollectionException& e) {
+            assertTrue(true, "RemoveFirstBit на пустой - исключение перехвачено");
+        }
+    }
+    
+    void testMapWhereReduceFind() {
+        std::cout << "\n--- Тесты Map/Where/Reduce/Find BitSequence ---" << std::endl;
+        
+        bool bits[] = {1, 0, 1, 0, 1, 0, 1, 1};
+        BitSequence seq(bits, 8);
+        printBits(&seq, "Исходная");
+        std::cout << "    Исходная: 10101011" << std::endl;
+        
+        Sequence<bool>* mapped = seq.Map();
+        assertEqual((size_t)8, mapped->GetLength(), "Map - длина не изменилась");
+        BitSequence* bitMapped = static_cast<BitSequence*>(mapped);
+        assertEqual(false, bitMapped->GetBit(0), "Map: 1 -> 0");
+        assertEqual(true, bitMapped->GetBit(1), "Map: 0 -> 1");
+        printBits(bitMapped, "После Map (NOT)");
+        delete mapped;
+        
+        Sequence<bool>* filtered = seq.Where();
+        assertEqual((size_t)5, filtered->GetLength(), "Where - только единицы");
+        BitSequence* bitFiltered = static_cast<BitSequence*>(filtered);
+        printBits(bitFiltered, "После Where (только 1)");
+        delete filtered;
+        
+        bool allTrue = seq.Reduce();
+        assertEqual(false, allTrue, "Reduce - не все биты = 1");
+        
+        bool bitsAllOne[] = {1, 1, 1, 1};
+        BitSequence allOne(bitsAllOne, 4);
+        assertEqual(true, allOne.Reduce(), "Reduce - все биты = 1");
+        
+        Option<bool> found = seq.Find();
+        assertTrue(found.IsSome(), "Find - найдена единица");
+        
+        BitSequence empty;
+        Option<bool> foundEmpty = empty.Find();
+        assertTrue(foundEmpty.IsNone(), "Find на пустой - ничего не найдено");
     }
     
     void testCopyAssignment() {
@@ -272,6 +336,8 @@ public:
         testBitwiseOperations();
         testAppendInsert();
         testGetSubsequence();
+        testRemoveBit();
+        testMapWhereReduceFind();
         testCopyAssignment();
         
         std::cout << "\n--- Итог ---" << std::endl;

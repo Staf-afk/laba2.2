@@ -13,8 +13,7 @@ private:
     
     void assertEqual(int expected, int actual, const std::string& testName) {
         if (expected == actual) {
-            std::cout << GREEN <<
-             "  [OK] " << testName << std::endl;
+            std::cout << GREEN <<"  [OK] " << RESET << testName << std::endl;
             passed++;
         } 
         else {

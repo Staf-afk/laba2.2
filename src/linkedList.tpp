@@ -1,4 +1,4 @@
-#include "../include/linkedList.hpp"
+﻿#include "../include/linkedList.hpp"
 #include "../include/exceptions.cpp"
 
 template<typename T> 
@@ -79,19 +79,19 @@ LinkedList<T>& LinkedList<T>::operator=(LinkedList<T>&& other) {
 
 template<typename T> 
 T LinkedList<T>::GetFirst() const {
-    if (!head) throw EmptyCollectionException();
+    if (!head) throw EmptyCollectionException("GetFirst");
     return head->data;
 }
 
 template<typename T> 
 T LinkedList<T>::GetLast() const {
-    if (!tail) throw EmptyCollectionException();
+    if (!tail) throw EmptyCollectionException("GetLast");
     return tail->data;
 }
 
 template<typename T> 
 T LinkedList<T>::Get(size_t index) const {
-    if (index >= length) throw IndexOutOfRangeException();
+    if (index >= length) throw IndexOutOfRangeException("LinkedList::Get", length, index);
     Node* curr = head;
     for (size_t i = 0; i < index; ++i) curr = curr->next;
     return curr->data;
@@ -102,11 +102,19 @@ size_t LinkedList<T>::GetLength() const { return length; }
 
 template<typename T> 
 LinkedList<T>* LinkedList<T>::GetSubList(size_t start, size_t end) const {
-    if (start > end || end >= length) throw IndexOutOfRangeException();
+    if (start > end) {
+        throw InvalidArgumentException("GetSubList", "начальный индекс больше конечного");
+    }
+    if (end >= length) {
+        throw IndexOutOfRangeException("GetSubList", length, end);
+    }
     LinkedList<T>* res = new LinkedList<T>();
     Node* curr = head;
     for (size_t i = 0; i < start; ++i) curr = curr->next;
-    for (size_t i = start; i <= end; ++i) { res->Append(curr->data); curr = curr->next; }
+    for (size_t i = start; i <= end; ++i) { 
+        res->Append(curr->data); 
+        curr = curr->next; 
+    }
     return res;
 }
 
@@ -128,7 +136,9 @@ void LinkedList<T>::Prepend(T item) {
 
 template<typename T> 
 void LinkedList<T>::InsertAt(T item, size_t index) {
-    if (index > length) throw IndexOutOfRangeException();
+    if (index > length) {
+        throw IndexOutOfRangeException("InsertAt", length, index);
+    }
     if (index == 0) { Prepend(item); return; }
     if (index == length) { Append(item); return; }
     Node* curr = head;

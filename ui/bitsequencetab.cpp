@@ -8,7 +8,6 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QString>
-#include <QLabel>
 #include <exception>
 
 QWidget* MainWindow::createBitSequenceTab()
@@ -23,13 +22,6 @@ QWidget* MainWindow::createBitSequenceTab()
     bitDisplay->setMaximumHeight(120);
     viewLayout->addWidget(bitDisplay);
     layout->addWidget(viewGroup);
-    
-    QHBoxLayout* infoLayout = new QHBoxLayout(infoGroup);
-    QLabel* memLabel = new QLabel();
-    memLabel->setStyleSheet("QLabel { color: green; font-weight: bold; }");
-    infoLayout->addWidget(memLabel);
-    infoLayout->addStretch();
-    layout->addWidget(infoGroup);
     
     QGroupBox* opsGroup = new QGroupBox("Битовые операции");
     QGridLayout* opsLayout = new QGridLayout(opsGroup);
@@ -90,7 +82,7 @@ QWidget* MainWindow::createBitSequenceTab()
     layout->addWidget(opsGroup);
     layout->addStretch();
     
-    connect(setBtn, &QPushButton::clicked, [this, indexInput, valueCheck, updateMemInfo]() {
+    connect(setBtn, &QPushButton::clicked, [this, indexInput, valueCheck]() {
         if (!indexInput->text().isEmpty()) {
             try {
                 size_t idx = indexInput->text().toInt();
@@ -98,7 +90,6 @@ QWidget* MainWindow::createBitSequenceTab()
                 displayBitSequence();
                 updateOutput("SetBit(" + QString::number(idx) + ", " + 
                     (valueCheck->isChecked() ? "1" : "0") + ")");
-                updateMemInfo();
             } catch (const std::exception& e) {
                 updateOutput("Ошибка: " + QString(e.what()));
             }
@@ -119,7 +110,7 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    connect(andBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+    connect(andBtn, &QPushButton::clicked, [this]() {
         try {
             BitSequence copy(*currentBitSeq);
             auto* result = currentBitSeq->And(copy);
@@ -129,13 +120,12 @@ QWidget* MainWindow::createBitSequenceTab()
             }
             updateOutput(res);
             delete result;
-            updateMemInfo();
         } catch (const std::exception& e) {
             updateOutput("Ошибка: " + QString(e.what()));
         }
     });
     
-    connect(orBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+    connect(orBtn, &QPushButton::clicked, [this]() {
         try {
             BitSequence copy(*currentBitSeq);
             auto* result = currentBitSeq->Or(copy);
@@ -145,13 +135,12 @@ QWidget* MainWindow::createBitSequenceTab()
             }
             updateOutput(res);
             delete result;
-            updateMemInfo();
         } catch (const std::exception& e) {
             updateOutput("Ошибка: " + QString(e.what()));
         }
     });
     
-    connect(xorBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+    connect(xorBtn, &QPushButton::clicked, [this]() {
         try {
             BitSequence copy(*currentBitSeq);
             auto* result = currentBitSeq->Xor(copy);
@@ -161,13 +150,12 @@ QWidget* MainWindow::createBitSequenceTab()
             }
             updateOutput(res);
             delete result;
-            updateMemInfo();
         } catch (const std::exception& e) {
             updateOutput("Ошибка: " + QString(e.what()));
         }
     });
     
-    connect(notBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+    connect(notBtn, &QPushButton::clicked, [this]() {
         try {
             auto* result = currentBitSeq->Not();
             QString res = "NOT результат: ";
@@ -176,13 +164,12 @@ QWidget* MainWindow::createBitSequenceTab()
             }
             updateOutput(res);
             delete result;
-            updateMemInfo();
         } catch (const std::exception& e) {
             updateOutput("Ошибка: " + QString(e.what()));
         }
     });
     
-    connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput, updateMemInfo]() {
+    connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
                 size_t start = startInput->text().toInt();
@@ -195,7 +182,6 @@ QWidget* MainWindow::createBitSequenceTab()
                 }
                 updateOutput(res);
                 delete subseq;
-                updateMemInfo();
             } catch (const std::exception& e) {
                 updateOutput("Ошибка: " + QString(e.what()));
             }
@@ -204,18 +190,17 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    connect(appendBtn, &QPushButton::clicked, [this, valueCheck, updateMemInfo]() {
+    connect(appendBtn, &QPushButton::clicked, [this, valueCheck]() {
         try {
             currentBitSeq->Append(valueCheck->isChecked());
             displayBitSequence();
             updateOutput("Append(" + QString::number(valueCheck->isChecked()) + ")");
-            updateMemInfo();
         } catch (const std::exception& e) {
             updateOutput("Ошибка: " + QString(e.what()));
         }
     });
     
-    connect(insertBtn, &QPushButton::clicked, [this, indexInput, valueCheck, updateMemInfo]() {
+    connect(insertBtn, &QPushButton::clicked, [this, indexInput, valueCheck]() {
         if (!indexInput->text().isEmpty()) {
             try {
                 size_t idx = indexInput->text().toInt();
@@ -223,7 +208,6 @@ QWidget* MainWindow::createBitSequenceTab()
                 displayBitSequence();
                 updateOutput("InsertAt(" + QString::number(valueCheck->isChecked()) + 
                     ", " + indexInput->text() + ")");
-                updateMemInfo();
             } catch (const std::exception& e) {
                 updateOutput("Ошибка: " + QString(e.what()));
             }
@@ -231,14 +215,13 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    connect(removeAtBtn, &QPushButton::clicked, [this, indexInput, updateMemInfo]() {
+    connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
                 size_t idx = indexInput->text().toInt();
                 currentBitSeq->RemoveBitAt(idx);
                 displayBitSequence();
                 updateOutput("RemoveBitAt(" + QString::number(idx) + ")");
-                updateMemInfo();
             } catch (const std::exception& e) {
                 updateOutput("Ошибка: " + QString(e.what()));
             }
@@ -246,13 +229,12 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    connect(removeFirstBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+    connect(removeFirstBtn, &QPushButton::clicked, [this]() {
         try {
             if (currentBitSeq->GetLength() > 0) {
                 currentBitSeq->RemoveFirstBit();
                 displayBitSequence();
                 updateOutput("RemoveFirstBit()");
-                updateMemInfo();
             } else {
                 updateOutput("RemoveFirstBit: последовательность пуста");
             }
@@ -261,13 +243,12 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    connect(removeLastBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+    connect(removeLastBtn, &QPushButton::clicked, [this]() {
         try {
             if (currentBitSeq->GetLength() > 0) {
                 currentBitSeq->RemoveLastBit();
                 displayBitSequence();
                 updateOutput("RemoveLastBit()");
-                updateMemInfo();
             } else {
                 updateOutput("RemoveLastBit: последовательность пуста");
             }
@@ -276,17 +257,16 @@ QWidget* MainWindow::createBitSequenceTab()
         }
     });
     
-    connect(createBtn, &QPushButton::clicked, [this, sizeInput, updateMemInfo]() {
+    connect(createBtn, &QPushButton::clicked, [this, sizeInput]() {
         size_t size = sizeInput->text().isEmpty() ? 8 : sizeInput->text().toInt();
         delete currentBitSeq;
         currentBitSeq = new BitSequence(size);
         displayBitSequence();
         updateOutput("Создана новая BitSequence размера " + QString::number(size));
-        updateMemInfo();
         sizeInput->clear();
     });
     
-    connect(setBitsFromStringBtn, &QPushButton::clicked, [this, bitsInput, updateMemInfo]() {
+    connect(setBitsFromStringBtn, &QPushButton::clicked, [this, bitsInput]() {
         if (!bitsInput->text().isEmpty()) {
             QString bitsStr = bitsInput->text().trimmed();
             size_t len = bitsStr.length();
@@ -302,12 +282,10 @@ QWidget* MainWindow::createBitSequenceTab()
             }
             displayBitSequence();
             updateOutput("Установлены биты из строки: " + bitsStr);
-            updateMemInfo();
             bitsInput->clear();
         }
     });
     
-    updateMemInfo();
-    
     return tab;
 }
+

@@ -1,4 +1,4 @@
-#include "../include/option.hpp"
+﻿#include "../include/option.hpp"
 
 template<typename T>
 Option<T>::Option() : value(nullptr), hasValue(false) {}
