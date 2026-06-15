@@ -8,30 +8,44 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QString>
+#include <QLabel>
 #include <exception>
 
 QWidget* MainWindow::createBitSequenceTab()
 {
     QWidget* tab = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout(tab);
-    QGroupBox* viewGroup = new QGroupBox("Текущий BitSequence");
+    
+    QGroupBox* viewGroup = new QGroupBox("Текущий BitSequence (упакованный, 1 бит на элемент)");
     QVBoxLayout* viewLayout = new QVBoxLayout(viewGroup);
     bitDisplay = new QTextEdit();
     bitDisplay->setReadOnly(true);
-    bitDisplay->setMaximumHeight(100);
+    bitDisplay->setMaximumHeight(120);
     viewLayout->addWidget(bitDisplay);
     layout->addWidget(viewGroup);
+    
+    QHBoxLayout* infoLayout = new QHBoxLayout(infoGroup);
+    QLabel* memLabel = new QLabel();
+    memLabel->setStyleSheet("QLabel { color: green; font-weight: bold; }");
+    infoLayout->addWidget(memLabel);
+    infoLayout->addStretch();
+    layout->addWidget(infoGroup);
+    
     QGroupBox* opsGroup = new QGroupBox("Битовые операции");
     QGridLayout* opsLayout = new QGridLayout(opsGroup);
+    
     QLineEdit* indexInput = new QLineEdit();
     indexInput->setPlaceholderText("Индекс бита");
-    QCheckBox* valueCheck = new QCheckBox("Значение бита");
+    QCheckBox* valueCheck = new QCheckBox("Значение бита (1/0)");
     QLineEdit* startInput = new QLineEdit();
     startInput->setPlaceholderText("Начало");
     QLineEdit* endInput = new QLineEdit();
     endInput->setPlaceholderText("Конец");
     QLineEdit* sizeInput = new QLineEdit();
     sizeInput->setPlaceholderText("Размер");
+    QLineEdit* bitsInput = new QLineEdit();
+    bitsInput->setPlaceholderText("Биты для установки (например: 10101010)");
+    
     QPushButton* setBtn = new QPushButton("SetBit");
     QPushButton* getBtn = new QPushButton("GetBit");
     QPushButton* andBtn = new QPushButton("AND (с копией)");
@@ -39,148 +53,261 @@ QWidget* MainWindow::createBitSequenceTab()
     QPushButton* xorBtn = new QPushButton("XOR (с копией)");
     QPushButton* notBtn = new QPushButton("NOT");
     QPushButton* subseqBtn = new QPushButton("GetSubsequence");
-    QPushButton* appendBtn = new QPushButton("Append");
+    QPushButton* appendBtn = new QPushButton("Append (добавить бит)");
     QPushButton* insertBtn = new QPushButton("InsertAt");
     QPushButton* createBtn = new QPushButton("Создать новый");
     QPushButton* removeAtBtn = new QPushButton("RemoveBitAt");
     QPushButton* removeFirstBtn = new QPushButton("RemoveFirstBit");
     QPushButton* removeLastBtn = new QPushButton("RemoveLastBit");
+    QPushButton* setBitsFromStringBtn = new QPushButton("Установить биты из строки");
+    
     opsLayout->addWidget(indexInput, 0, 0);
     opsLayout->addWidget(valueCheck, 0, 1);
     opsLayout->addWidget(setBtn, 0, 2);
     opsLayout->addWidget(getBtn, 0, 3);
+    
     opsLayout->addWidget(andBtn, 1, 0);
     opsLayout->addWidget(orBtn, 1, 1);
     opsLayout->addWidget(xorBtn, 1, 2);
     opsLayout->addWidget(notBtn, 1, 3);
+    
     opsLayout->addWidget(startInput, 2, 0);
     opsLayout->addWidget(endInput, 2, 1);
     opsLayout->addWidget(subseqBtn, 2, 2);
     opsLayout->addWidget(appendBtn, 2, 3);
+    
     opsLayout->addWidget(sizeInput, 3, 0);
     opsLayout->addWidget(createBtn, 3, 1);
     opsLayout->addWidget(insertBtn, 3, 2);
+    
     opsLayout->addWidget(removeAtBtn, 4, 0);
     opsLayout->addWidget(removeFirstBtn, 4, 1);
     opsLayout->addWidget(removeLastBtn, 4, 2);
+    
+    opsLayout->addWidget(bitsInput, 5, 0, 1, 2);
+    opsLayout->addWidget(setBitsFromStringBtn, 5, 2, 1, 2);
+    
     layout->addWidget(opsGroup);
     layout->addStretch();
-    connect(setBtn, &QPushButton::clicked, [this, indexInput, valueCheck]() {
+    
+    connect(setBtn, &QPushButton::clicked, [this, indexInput, valueCheck, updateMemInfo]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                currentBitSeq->SetBit((indexInput->text().toInt()), valueCheck->isChecked());
+                size_t idx = indexInput->text().toInt();
+                currentBitSeq->SetBit(idx, valueCheck->isChecked());
                 displayBitSequence();
-                updateOutput("Bit SetBit(" + indexInput->text() + ", " + (valueCheck->isChecked() ? "1" : "0") + ")");
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
+                updateOutput("SetBit(" + QString::number(idx) + ", " + 
+                    (valueCheck->isChecked() ? "1" : "0") + ")");
+                updateMemInfo();
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
             indexInput->clear();
         }
     });
+    
     connect(getBtn, &QPushButton::clicked, [this, indexInput]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                bool val = currentBitSeq->GetBit((indexInput->text().toInt()));
-                updateOutput("Bit GetBit(" + indexInput->text() + ") = " + QString::number(val));
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
+                size_t idx = indexInput->text().toInt();
+                bool val = currentBitSeq->GetBit(idx);
+                updateOutput("GetBit(" + QString::number(idx) + ") = " + QString::number(val));
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
             indexInput->clear();
         }
     });
-    connect(removeAtBtn, &QPushButton::clicked, [this, indexInput]() {
-        if (!indexInput->text().isEmpty()) {
-            try {
-                size_t index = (indexInput->text().toInt());
-                if (index < (currentBitSeq->GetLength())) {
-                    BitSequence* newSeq = new BitSequence(currentBitSeq->GetLength() - 1);
-                    size_t newIndex = 0;
-                    for (size_t i = 0; i < (currentBitSeq->GetLength()); i++) {
-                        if (i != index) newSeq->SetBit(newIndex++, currentBitSeq->GetBit(i));
-                    }
-                    delete currentBitSeq; currentBitSeq = newSeq;
-                    displayBitSequence(); updateOutput("Bit RemoveBitAt(" + QString::number(index) + ")");
-                } else { updateOutput("Ошибка: Индекс вне диапазона"); }
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
-            indexInput->clear();
+    
+    connect(andBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+        try {
+            BitSequence copy(*currentBitSeq);
+            auto* result = currentBitSeq->And(copy);
+            QString res = "AND результат: ";
+            for (size_t i = 0; i < result->GetLength(); ++i) {
+                res += QString::number(result->GetBit(i));
+            }
+            updateOutput(res);
+            delete result;
+            updateMemInfo();
+        } catch (const std::exception& e) {
+            updateOutput("Ошибка: " + QString(e.what()));
         }
     });
-    connect(removeFirstBtn, &QPushButton::clicked, [this]() {
-        if (currentBitSeq->GetLength() > 0) {
-            try {
-                BitSequence* newSeq = new BitSequence(currentBitSeq->GetLength() - 1);
-                for (size_t i = 1; i < (currentBitSeq->GetLength()); i++) newSeq->SetBit(i - 1, currentBitSeq->GetBit(i));
-                delete currentBitSeq; currentBitSeq = newSeq;
-                displayBitSequence(); updateOutput("Bit RemoveFirstBit()");
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
-        } else { updateOutput("RemoveFirstBit: последовательность пуста"); }
+    
+    connect(orBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+        try {
+            BitSequence copy(*currentBitSeq);
+            auto* result = currentBitSeq->Or(copy);
+            QString res = "OR результат: ";
+            for (size_t i = 0; i < result->GetLength(); ++i) {
+                res += QString::number(result->GetBit(i));
+            }
+            updateOutput(res);
+            delete result;
+            updateMemInfo();
+        } catch (const std::exception& e) {
+            updateOutput("Ошибка: " + QString(e.what()));
+        }
     });
-    connect(removeLastBtn, &QPushButton::clicked, [this]() {
-        if (currentBitSeq->GetLength() > 0) {
-            try {
-                BitSequence* newSeq = new BitSequence(currentBitSeq->GetLength() - 1);
-                for (size_t i = 0; i < (currentBitSeq->GetLength()) - 1; i++) newSeq->SetBit(i, currentBitSeq->GetBit(i));
-                delete currentBitSeq; currentBitSeq = newSeq;
-                displayBitSequence(); updateOutput("Bit RemoveLastBit()");
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
-        } else { updateOutput("RemoveLastBit: последовательность пуста"); }
+    
+    connect(xorBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+        try {
+            BitSequence copy(*currentBitSeq);
+            auto* result = currentBitSeq->Xor(copy);
+            QString res = "XOR результат: ";
+            for (size_t i = 0; i < result->GetLength(); ++i) {
+                res += QString::number(result->GetBit(i));
+            }
+            updateOutput(res);
+            delete result;
+            updateMemInfo();
+        } catch (const std::exception& e) {
+            updateOutput("Ошибка: " + QString(e.what()));
+        }
     });
-    connect(andBtn, &QPushButton::clicked, [this]() {
-        BitSequence copy(*currentBitSeq);
-        auto* result = currentBitSeq->And(copy);
-        QString res = "Bit AND результат: ";
-        for (size_t i = 0; i < (result->GetLength()); i++) res += QString::number(result->GetBit(i));
-        updateOutput(res); delete result;
+    
+    connect(notBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+        try {
+            auto* result = currentBitSeq->Not();
+            QString res = "NOT результат: ";
+            for (size_t i = 0; i < result->GetLength(); ++i) {
+                res += QString::number(result->GetBit(i));
+            }
+            updateOutput(res);
+            delete result;
+            updateMemInfo();
+        } catch (const std::exception& e) {
+            updateOutput("Ошибка: " + QString(e.what()));
+        }
     });
-    connect(orBtn, &QPushButton::clicked, [this]() {
-        BitSequence copy(*currentBitSeq);
-        auto* result = currentBitSeq->Or(copy);
-        QString res = "Bit OR результат: ";
-        for (size_t i = 0; i < (result->GetLength()); i++) res += QString::number(result->GetBit(i));
-        updateOutput(res); delete result;
-    });
-    connect(xorBtn, &QPushButton::clicked, [this]() {
-        BitSequence copy(*currentBitSeq);
-        auto* result = currentBitSeq->Xor(copy);
-        QString res = "Bit XOR результат: ";
-        for (size_t i = 0; i < (result->GetLength()); i++) res += QString::number(result->GetBit(i));
-        updateOutput(res); delete result;
-    });
-    connect(notBtn, &QPushButton::clicked, [this]() {
-        auto* result = currentBitSeq->Not();
-        QString res = "Bit NOT результат: ";
-        for (size_t i = 0; i < (result->GetLength()); i++) res += QString::number(result->GetBit(i));
-        updateOutput(res); delete result;
-    });
-    connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput]() {
+    
+    connect(subseqBtn, &QPushButton::clicked, [this, startInput, endInput, updateMemInfo]() {
         if (!startInput->text().isEmpty() && !endInput->text().isEmpty()) {
             try {
-                auto* subseq = currentBitSeq->GetSubsequence((startInput->text().toInt()), (endInput->text().toInt()));
-                QString res = "Bit подпоследовательность: ";
-                for (size_t i = 0; i < (subseq->GetLength()); i++) res += QString::number(subseq->GetBit(i));
-                updateOutput(res); delete subseq;
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
-            startInput->clear(); endInput->clear();
+                size_t start = startInput->text().toInt();
+                size_t end = endInput->text().toInt();
+                auto* subseq = currentBitSeq->GetSubsequence(start, end);
+                QString res = "Подпоследовательность [" + QString::number(start) + "-" + 
+                    QString::number(end) + "]: ";
+                for (size_t i = 0; i < subseq->GetLength(); ++i) {
+                    res += QString::number(subseq->Get(i));
+                }
+                updateOutput(res);
+                delete subseq;
+                updateMemInfo();
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
+            startInput->clear();
+            endInput->clear();
         }
     });
-    connect(appendBtn, &QPushButton::clicked, [this, valueCheck]() {
-        currentBitSeq->Append(Bit(valueCheck->isChecked()));
-        displayBitSequence();
-        updateOutput("Bit Append(" + QString::number(valueCheck->isChecked()) + ")");
+    
+    connect(appendBtn, &QPushButton::clicked, [this, valueCheck, updateMemInfo]() {
+        try {
+            currentBitSeq->Append(valueCheck->isChecked());
+            displayBitSequence();
+            updateOutput("Append(" + QString::number(valueCheck->isChecked()) + ")");
+            updateMemInfo();
+        } catch (const std::exception& e) {
+            updateOutput("Ошибка: " + QString(e.what()));
+        }
     });
-    connect(insertBtn, &QPushButton::clicked, [this, indexInput, valueCheck]() {
+    
+    connect(insertBtn, &QPushButton::clicked, [this, indexInput, valueCheck, updateMemInfo]() {
         if (!indexInput->text().isEmpty()) {
             try {
-                currentBitSeq->InsertAt(Bit(valueCheck->isChecked()), (indexInput->text().toInt()));
+                size_t idx = indexInput->text().toInt();
+                currentBitSeq->InsertAt(valueCheck->isChecked(), idx);
                 displayBitSequence();
-                updateOutput("Bit InsertAt(" + QString::number(valueCheck->isChecked()) + ", " + indexInput->text() + ")");
-            } catch (const std::exception& e) { updateOutput("Ошибка: " + QString(e.what())); }
+                updateOutput("InsertAt(" + QString::number(valueCheck->isChecked()) + 
+                    ", " + indexInput->text() + ")");
+                updateMemInfo();
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
             indexInput->clear();
         }
     });
-    connect(createBtn, &QPushButton::clicked, [this, sizeInput]() {
-        size_t size = sizeInput->text().isEmpty() ? 8 : (sizeInput->text().toInt());
+    
+    connect(removeAtBtn, &QPushButton::clicked, [this, indexInput, updateMemInfo]() {
+        if (!indexInput->text().isEmpty()) {
+            try {
+                size_t idx = indexInput->text().toInt();
+                currentBitSeq->RemoveBitAt(idx);
+                displayBitSequence();
+                updateOutput("RemoveBitAt(" + QString::number(idx) + ")");
+                updateMemInfo();
+            } catch (const std::exception& e) {
+                updateOutput("Ошибка: " + QString(e.what()));
+            }
+            indexInput->clear();
+        }
+    });
+    
+    connect(removeFirstBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+        try {
+            if (currentBitSeq->GetLength() > 0) {
+                currentBitSeq->RemoveFirstBit();
+                displayBitSequence();
+                updateOutput("RemoveFirstBit()");
+                updateMemInfo();
+            } else {
+                updateOutput("RemoveFirstBit: последовательность пуста");
+            }
+        } catch (const std::exception& e) {
+            updateOutput("Ошибка: " + QString(e.what()));
+        }
+    });
+    
+    connect(removeLastBtn, &QPushButton::clicked, [this, updateMemInfo]() {
+        try {
+            if (currentBitSeq->GetLength() > 0) {
+                currentBitSeq->RemoveLastBit();
+                displayBitSequence();
+                updateOutput("RemoveLastBit()");
+                updateMemInfo();
+            } else {
+                updateOutput("RemoveLastBit: последовательность пуста");
+            }
+        } catch (const std::exception& e) {
+            updateOutput("Ошибка: " + QString(e.what()));
+        }
+    });
+    
+    connect(createBtn, &QPushButton::clicked, [this, sizeInput, updateMemInfo]() {
+        size_t size = sizeInput->text().isEmpty() ? 8 : sizeInput->text().toInt();
         delete currentBitSeq;
         currentBitSeq = new BitSequence(size);
         displayBitSequence();
         updateOutput("Создана новая BitSequence размера " + QString::number(size));
+        updateMemInfo();
         sizeInput->clear();
     });
+    
+    connect(setBitsFromStringBtn, &QPushButton::clicked, [this, bitsInput, updateMemInfo]() {
+        if (!bitsInput->text().isEmpty()) {
+            QString bitsStr = bitsInput->text().trimmed();
+            size_t len = bitsStr.length();
+            delete currentBitSeq;
+            currentBitSeq = new BitSequence(len);
+            for (size_t i = 0; i < len; ++i) {
+                QChar ch = bitsStr.at(i);
+                if (ch == '1') {
+                    currentBitSeq->SetBit(i, true);
+                } else if (ch == '0') {
+                    currentBitSeq->SetBit(i, false);
+                }
+            }
+            displayBitSequence();
+            updateOutput("Установлены биты из строки: " + bitsStr);
+            updateMemInfo();
+            bitsInput->clear();
+        }
+    });
+    
+    updateMemInfo();
+    
     return tab;
 }
